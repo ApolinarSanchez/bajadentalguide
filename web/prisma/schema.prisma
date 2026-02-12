@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Clinic {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  slug          String   @unique
+  addressLine1  String?
+  city          String   @default("Tijuana")
+  state         String   @default("BC")
+  country       String   @default("MX")
+  phone         String?
+  whatsapp      String?
+  websiteUrl    String?
+  googleMapsUrl String?
+  yelpUrl       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([slug])
+}

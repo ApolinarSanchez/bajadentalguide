@@ -4,5 +4,16 @@ test("clinics page loads", async ({ page }) => {
   await page.goto("/clinics");
 
   await expect(page.getByRole("heading", { name: "Clinics" })).toBeVisible();
-  await expect(page.getByText("Placeholder list of clinics.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Baja Smile Dental Center" })).toBeVisible();
+});
+
+test("clinic details page loads after clicking a clinic", async ({ page }) => {
+  await page.goto("/clinics");
+
+  await page.getByRole("link", { name: "Baja Smile Dental Center" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Baja Smile Dental Center" }),
+  ).toBeVisible();
+  await expect(page.getByText("Slug: baja-smile-dental-center")).toBeVisible();
 });
