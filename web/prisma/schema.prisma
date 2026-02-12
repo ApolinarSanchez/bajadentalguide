@@ -24,8 +24,15 @@ model Clinic {
   updatedAt     DateTime @updatedAt
   events        Event[]
   savedClinics  SavedClinic[]
+  reviews       Review[]
 
   @@index([slug])
+}
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
 }
 
 model Event {
@@ -51,4 +58,27 @@ model SavedClinic {
   @@index([sessionId])
   @@index([clinicId])
   @@unique([sessionId, clinicId])
+}
+
+model Review {
+  id              String       @id @default(uuid()) @db.Uuid
+  clinicId        String       @db.Uuid
+  sessionId       String
+  status          ReviewStatus @default(PENDING)
+  ratingOverall   Int
+  procedure       String?
+  visitMonth      Int?
+  visitYear       Int?
+  headline        String?
+  body            String
+  rejectionReason String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  publishedAt     DateTime?
+  clinic          Clinic       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([sessionId])
+  @@index([status])
+  @@unique([clinicId, sessionId])
 }

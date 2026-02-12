@@ -23,6 +23,9 @@ export default async function AdminPage() {
       <p>
         <Link href="/admin/import">Import clinics CSV</Link>
       </p>
+      <p>
+        <Link href="/admin/reviews">Moderate reviews</Link>
+      </p>
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
           <tr>
