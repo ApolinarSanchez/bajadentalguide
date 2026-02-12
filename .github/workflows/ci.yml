@@ -23,6 +23,8 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bdg?schema=public
+      ADMIN_USER: admin
+      ADMIN_PASS: admin
     defaults:
       run:
         working-directory: web

@@ -4,14 +4,18 @@ const isCI = Boolean(process.env.CI);
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  workers: isCI ? 1 : undefined,
+  workers: 1,
   reporter: "html",
   use: {
     baseURL: "http://127.0.0.1:3000",
     trace: "on-first-retry",
+    httpCredentials: {
+      username: process.env.ADMIN_USER ?? "admin",
+      password: process.env.ADMIN_PASS ?? "admin",
+    },
   },
   projects: [
     {
