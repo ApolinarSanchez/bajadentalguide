@@ -1,8 +1,12 @@
 import Link from "next/link";
 import type { Prisma } from "@prisma/client";
+import { SaveClinicButton } from "@/components/SaveClinicButton";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
 import { db } from "@/lib/db";
 import { parseClinicFilters } from "@/lib/clinics/parseClinicFilters";
+import { getSessionIdFromCookies } from "@/lib/session";
+import { buildSavedSet } from "@/lib/shortlist";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +30,7 @@ function addPresenceFilters(
 
 export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
   const filters = parseClinicFilters(await searchParams);
+  const sessionId = getSessionIdFromCookies(await cookies());
   const whereClauses: Prisma.ClinicWhereInput[] = [];
 
   if (filters.q) {
@@ -68,6 +73,18 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
       yelpUrl: true,
     },
   });
+
+  const savedRows = sessionId
+    ? await db.savedClinic.findMany({
+        where: {
+          sessionId,
+        },
+        select: {
+          clinicId: true,
+        },
+      })
+    : [];
+  const savedClinicIds = buildSavedSet(savedRows);
 
   return (
     <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -136,6 +153,11 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
                 <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
               </p>
               <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <SaveClinicButton
+                  clinicId={clinic.id}
+                  initialSaved={savedClinicIds.has(clinic.id)}
+                  source="clinics_list"
+                />
                 {clinic.websiteUrl ? (
                   <TrackedOutboundLink href={`/out/${clinic.slug}?dest=website`}>
                     Website

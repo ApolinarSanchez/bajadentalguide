@@ -23,6 +23,7 @@ model Clinic {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   events        Event[]
+  savedClinics  SavedClinic[]
 
   @@index([slug])
 }
@@ -38,4 +39,16 @@ model Event {
 
   @@index([sessionId])
   @@index([clinicId])
+}
+
+model SavedClinic {
+  id        String   @id @default(uuid()) @db.Uuid
+  sessionId String
+  clinicId  String   @db.Uuid
+  createdAt DateTime @default(now())
+  clinic    Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([clinicId])
+  @@unique([sessionId, clinicId])
 }

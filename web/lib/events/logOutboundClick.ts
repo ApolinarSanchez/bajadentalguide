@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { logEvent } from "@/lib/events";
 
 const outboundDestinations = ["website", "whatsapp", "google", "yelp"] as const;
 
@@ -48,14 +49,12 @@ export async function logOutboundClick({
     return null;
   }
 
-  await db.event.create({
-    data: {
-      sessionId: sessionId ?? null,
-      clinicId: clinic.id,
-      eventName: "outbound_click",
-      metadata: {
-        dest,
-      },
+  await logEvent({
+    sessionId,
+    clinicId: clinic.id,
+    eventName: "outbound_click",
+    metadata: {
+      dest,
     },
   });
 

@@ -1,5 +1,9 @@
+import { SaveClinicButton } from "@/components/SaveClinicButton";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
 import { db } from "@/lib/db";
+import { getSessionIdFromCookies } from "@/lib/session";
+import { isClinicSaved } from "@/lib/shortlist";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 type ClinicProfilePageProps = {
@@ -14,6 +18,7 @@ export default async function ClinicProfilePage({
   params,
 }: ClinicProfilePageProps) {
   const { slug } = await params;
+  const sessionId = getSessionIdFromCookies(await cookies());
   const clinic = await db.clinic.findUnique({
     where: {
       slug,
@@ -38,9 +43,12 @@ export default async function ClinicProfilePage({
     notFound();
   }
 
+  const initialSaved = sessionId ? await isClinicSaved(sessionId, clinic.id) : false;
+
   return (
     <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>{clinic.name}</h1>
+      <SaveClinicButton clinicId={clinic.id} initialSaved={initialSaved} source="clinic_page" />
       <p>Clinic profile</p>
       <p>Slug: {clinic.slug}</p>
       <p>

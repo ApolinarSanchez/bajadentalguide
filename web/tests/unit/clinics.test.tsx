@@ -2,8 +2,9 @@ import { render, screen } from "@testing-library/react";
 import ClinicsPage from "@/app/clinics/page";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { findManyMock } = vi.hoisted(() => ({
+const { findManyMock, cookiesMock } = vi.hoisted(() => ({
   findManyMock: vi.fn(),
+  cookiesMock: vi.fn(),
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -11,11 +12,28 @@ vi.mock("@/lib/db", () => ({
     clinic: {
       findMany: findManyMock,
     },
+    savedClinic: {
+      findMany: vi.fn(),
+    },
   },
+}));
+
+vi.mock("next/headers", () => ({
+  cookies: cookiesMock,
+}));
+
+vi.mock("@/components/SaveClinicButton", () => ({
+  SaveClinicButton: () => <button type="button">Save</button>,
 }));
 
 describe("Clinics page", () => {
   beforeEach(() => {
+    cookiesMock.mockResolvedValue({
+      get() {
+        return undefined;
+      },
+    });
+
     findManyMock.mockResolvedValue([
       {
         id: "1",
