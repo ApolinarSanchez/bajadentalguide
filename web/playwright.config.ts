@@ -10,7 +10,7 @@ export default defineConfig({
   workers: 1,
   reporter: "html",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://localhost:3000",
     trace: "on-first-retry",
     httpCredentials: {
       username: process.env.ADMIN_USER ?? "admin",
@@ -24,9 +24,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev -- --hostname 127.0.0.1 --port 3000",
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: !isCI,
+    command: "npm run dev -- --hostname localhost --port 3000",
+    url: "http://localhost:3000",
+    reuseExistingServer: false,
     timeout: 120000,
   },
 });

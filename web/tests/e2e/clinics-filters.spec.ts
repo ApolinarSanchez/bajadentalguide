@@ -1,0 +1,28 @@
+import { expect, test } from "@playwright/test";
+
+test("clinics search filters down to one matching clinic", async ({ page }) => {
+  await page.goto("/clinics");
+
+  const firstClinicName = (await page.locator('[data-testid="clinic-item"] a[href^="/clinics/"]').first().innerText()).trim();
+
+  await page.getByLabel("Search clinics").fill(firstClinicName);
+  await page.getByRole("button", { name: "Apply filters" }).click();
+
+  await expect(page.getByTestId("results-count")).toContainText("Results: 1");
+  await expect(page.getByRole("link", { name: firstClinicName })).toBeVisible();
+});
+
+test("hasWebsite filter only shows clinics with Website links", async ({ page }) => {
+  await page.goto("/clinics");
+
+  await page.getByLabel("Has website").check();
+  await page.getByRole("button", { name: "Apply filters" }).click();
+
+  const clinicRows = page.getByTestId("clinic-item");
+  const rowCount = await clinicRows.count();
+  expect(rowCount).toBeGreaterThan(0);
+
+  for (let index = 0; index < rowCount; index += 1) {
+    await expect(clinicRows.nth(index).getByRole("link", { name: "Website" })).toBeVisible();
+  }
+});

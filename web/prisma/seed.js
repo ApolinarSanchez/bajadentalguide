@@ -61,7 +61,7 @@ function toSeedClinics() {
       country: "MX",
       phone: `+52-664-555-${String(1000 + index)}`,
       whatsapp: `+52-664-777-${String(1000 + index)}`,
-      websiteUrl: `https://www.${slug}.example`,
+      websiteUrl: index === 0 ? "/__e2e__/target" : `https://www.${slug}.example`,
       googleMapsUrl: `https://maps.google.com/?q=${encodeURIComponent(name)}`,
       yelpUrl: `https://www.yelp.com/biz/${slug}`,
     };

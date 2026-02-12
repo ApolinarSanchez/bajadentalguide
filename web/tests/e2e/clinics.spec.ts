@@ -18,3 +18,20 @@ test("clinic details page loads after clicking a clinic", async ({ page }) => {
   ).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Slug: baja-smile-dental-center")).toBeVisible();
 });
+
+test("clinic website link redirects through /out route", async ({ page }) => {
+  await page.goto("/clinics/baja-smile-dental-center");
+
+  const outResponsePromise = page.waitForResponse((response) =>
+    response.url().includes("/out/baja-smile-dental-center?dest=website"),
+  );
+
+  await page.getByRole("link", { name: "Website" }).click();
+
+  const outResponse = await outResponsePromise;
+  expect(outResponse.status()).toBe(302);
+  expect(outResponse.headers().location).toContain("/__e2e__/target");
+
+  await page.goto("/out/baja-smile-dental-center?dest=website");
+  await expect(page.getByRole("heading", { name: "Outbound Target" })).toBeVisible();
+});

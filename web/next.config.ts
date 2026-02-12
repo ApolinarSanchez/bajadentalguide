@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/__e2e__/target",
+        destination: "/e2e-target",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,3 +1,4 @@
+import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 
@@ -17,6 +18,20 @@ export default async function ClinicProfilePage({
     where: {
       slug,
     },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      city: true,
+      state: true,
+      country: true,
+      addressLine1: true,
+      phone: true,
+      whatsapp: true,
+      websiteUrl: true,
+      googleMapsUrl: true,
+      yelpUrl: true,
+    },
   });
 
   if (!clinic) {
@@ -34,6 +49,31 @@ export default async function ClinicProfilePage({
       {clinic.addressLine1 ? <p>Address: {clinic.addressLine1}</p> : null}
       {clinic.phone ? <p>Phone: {clinic.phone}</p> : null}
       {clinic.whatsapp ? <p>WhatsApp: {clinic.whatsapp}</p> : null}
+      {clinic.websiteUrl || clinic.whatsapp || clinic.googleMapsUrl || clinic.yelpUrl ? (
+        <section>
+          <h2>Links</h2>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            {clinic.websiteUrl ? (
+              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=website`}>
+                Website
+              </TrackedOutboundLink>
+            ) : null}
+            {clinic.whatsapp ? (
+              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=whatsapp`}>
+                WhatsApp
+              </TrackedOutboundLink>
+            ) : null}
+            {clinic.googleMapsUrl ? (
+              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=google`}>
+                Google Listing
+              </TrackedOutboundLink>
+            ) : null}
+            {clinic.yelpUrl ? (
+              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=yelp`}>Yelp</TrackedOutboundLink>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
