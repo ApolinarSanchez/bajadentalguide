@@ -27,3 +27,15 @@ test("hasWebsite filter only shows clinics with Website links", async ({ page })
     await expect(clinicRows.nth(index).getByRole("link", { name: "Website" })).toBeVisible();
   }
 });
+
+test("procedure and neighborhood filters find known e2e clinic", async ({ page }) => {
+  await page.goto("/clinics");
+
+  await page.getByLabel("Procedure").selectOption("dental-implants");
+  await page.getByLabel("Neighborhood").selectOption("zona-rio");
+  await page.getByRole("button", { name: "Apply filters" }).click();
+
+  await expect(page.getByRole("link", { name: "BDG E2E Implants Clinic" })).toBeVisible();
+  await expect(page).toHaveURL(/procedure=dental-implants/);
+  await expect(page).toHaveURL(/neighborhood=zona-rio/);
+});

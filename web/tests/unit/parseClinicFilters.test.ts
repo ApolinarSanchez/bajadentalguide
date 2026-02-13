@@ -22,4 +22,28 @@ describe("parseClinicFilters", () => {
     expect(missingSort.sort).toBe("name_asc");
     expect(invalidSort.sort).toBe("name_asc");
   });
+
+  it("parses neighborhood slug", () => {
+    const filters = parseClinicFilters(new URLSearchParams({ neighborhood: "zona-rio" }));
+
+    expect(filters.neighborhood).toBe("zona-rio");
+  });
+
+  it("parses procedure slug", () => {
+    const filters = parseClinicFilters(new URLSearchParams({ procedure: "dental-implants" }));
+
+    expect(filters.procedure).toBe("dental-implants");
+  });
+
+  it("treats empty neighborhood and procedure values as undefined", () => {
+    const filters = parseClinicFilters(
+      new URLSearchParams({
+        neighborhood: "   ",
+        procedure: "",
+      }),
+    );
+
+    expect(filters.neighborhood).toBeUndefined();
+    expect(filters.procedure).toBeUndefined();
+  });
 });

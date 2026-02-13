@@ -2,15 +2,24 @@ import { render, screen } from "@testing-library/react";
 import ClinicsPage from "@/app/clinics/page";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { findManyMock, cookiesMock } = vi.hoisted(() => ({
-  findManyMock: vi.fn(),
+const { clinicFindManyMock, neighborhoodFindManyMock, procedureFindManyMock, cookiesMock } =
+  vi.hoisted(() => ({
+    clinicFindManyMock: vi.fn(),
+    neighborhoodFindManyMock: vi.fn(),
+    procedureFindManyMock: vi.fn(),
   cookiesMock: vi.fn(),
-}));
+  }));
 
 vi.mock("@/lib/db", () => ({
   db: {
     clinic: {
-      findMany: findManyMock,
+      findMany: clinicFindManyMock,
+    },
+    neighborhood: {
+      findMany: neighborhoodFindManyMock,
+    },
+    procedure: {
+      findMany: procedureFindManyMock,
     },
     savedClinic: {
       findMany: vi.fn(),
@@ -34,7 +43,10 @@ describe("Clinics page", () => {
       },
     });
 
-    findManyMock.mockResolvedValue([
+    neighborhoodFindManyMock.mockResolvedValue([]);
+    procedureFindManyMock.mockResolvedValue([]);
+
+    clinicFindManyMock.mockResolvedValue([
       {
         id: "1",
         name: "Baja Smile Dental Center",

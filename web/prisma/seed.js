@@ -54,6 +54,20 @@ const TAXONOMY_PROCEDURES = [
   },
 ];
 
+const KNOWN_E2E_IMPLANTS_CLINIC = {
+  name: "BDG E2E Implants Clinic",
+  slug: "bdg-e2e-implants-clinic",
+  addressLine1: "500 Boulevard Agua Caliente",
+  city: "Tijuana",
+  state: "BC",
+  country: "MX",
+  phone: "+52-664-888-2000",
+  whatsapp: "+52-664-888-2000",
+  websiteUrl: "https://www.bdg-e2e-implants-clinic.example",
+  googleMapsUrl: "https://maps.google.com/?q=BDG%20E2E%20Implants%20Clinic",
+  yelpUrl: "https://www.yelp.com/biz/bdg-e2e-implants-clinic",
+};
+
 function slugify(value) {
   return value
     .normalize("NFD")
@@ -96,7 +110,7 @@ function toSeedClinics() {
 
   const usedSlugs = new Map();
 
-  return names.map((name, index) => {
+  const generatedClinics = names.map((name, index) => {
     const baseSlug = slugify(name);
     const collisionCount = usedSlugs.get(baseSlug) ?? 0;
     usedSlugs.set(baseSlug, collisionCount + 1);
@@ -117,6 +131,8 @@ function toSeedClinics() {
       yelpUrl: `https://www.yelp.com/biz/${slug}`,
     };
   });
+
+  return [...generatedClinics, KNOWN_E2E_IMPLANTS_CLINIC];
 }
 
 async function main() {
@@ -153,6 +169,8 @@ async function main() {
   );
 
   const clinics = toSeedClinics();
+  const zonaRioNeighborhood = neighborhoods.find((neighborhood) => neighborhood.slug === "zona-rio");
+  const dentalImplantsIndex = procedures.findIndex((procedure) => procedure.slug === "dental-implants");
 
   const savedClinics = await Promise.all(
     clinics.map((clinic, index) =>
@@ -160,11 +178,17 @@ async function main() {
         where: { slug: clinic.slug },
         update: {
           ...clinic,
-          neighborhoodId: neighborhoods[index % neighborhoods.length].id,
+          neighborhoodId:
+            clinic.slug === KNOWN_E2E_IMPLANTS_CLINIC.slug && zonaRioNeighborhood
+              ? zonaRioNeighborhood.id
+              : neighborhoods[index % neighborhoods.length].id,
         },
         create: {
           ...clinic,
-          neighborhoodId: neighborhoods[index % neighborhoods.length].id,
+          neighborhoodId:
+            clinic.slug === KNOWN_E2E_IMPLANTS_CLINIC.slug && zonaRioNeighborhood
+              ? zonaRioNeighborhood.id
+              : neighborhoods[index % neighborhoods.length].id,
         },
         select: {
           id: true,
@@ -185,11 +209,14 @@ async function main() {
   });
 
   const clinicProcedureRows = savedClinics.flatMap((clinic, index) => {
-    const procedureIndexes = [
-      index % procedures.length,
-      (index + 1) % procedures.length,
-      ...(index % 2 === 0 ? [(index + 2) % procedures.length] : []),
-    ];
+    const procedureIndexes =
+      clinic.slug === KNOWN_E2E_IMPLANTS_CLINIC.slug && dentalImplantsIndex >= 0
+        ? [dentalImplantsIndex, (dentalImplantsIndex + 1) % procedures.length]
+        : [
+            index % procedures.length,
+            (index + 1) % procedures.length,
+            ...(index % 2 === 0 ? [(index + 2) % procedures.length] : []),
+          ];
 
     const uniqueProcedureIndexes = [...new Set(procedureIndexes)];
 

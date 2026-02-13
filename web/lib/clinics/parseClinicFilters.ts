@@ -2,6 +2,8 @@ export type ClinicSort = "name_asc" | "name_desc" | "newest";
 
 export type ClinicFilters = {
   q: string;
+  neighborhood?: string;
+  procedure?: string;
   hasWebsite: boolean;
   hasWhatsapp: boolean;
   hasGoogle: boolean;
@@ -38,9 +40,20 @@ function parseSort(value: string | undefined): ClinicSort {
   return "name_asc";
 }
 
+function parseOptionalSlug(value: string | undefined): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export function parseClinicFilters(searchParams: SearchParamsInput): ClinicFilters {
   return {
     q: (getFirstParamValue(searchParams, "q") ?? "").trim(),
+    neighborhood: parseOptionalSlug(getFirstParamValue(searchParams, "neighborhood")),
+    procedure: parseOptionalSlug(getFirstParamValue(searchParams, "procedure")),
     hasWebsite: parseToggle(getFirstParamValue(searchParams, "hasWebsite")),
     hasWhatsapp: parseToggle(getFirstParamValue(searchParams, "hasWhatsapp")),
     hasGoogle: parseToggle(getFirstParamValue(searchParams, "hasGoogle")),

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import type { Prisma } from "@prisma/client";
 import { SaveClinicButton } from "@/components/SaveClinicButton";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
 import { db } from "@/lib/db";
+import { buildClinicQuery } from "@/lib/clinics/buildClinicQuery";
 import { parseClinicFilters } from "@/lib/clinics/parseClinicFilters";
 import { getSessionIdFromCookies } from "@/lib/session";
 import { buildSavedSet } from "@/lib/shortlist";
@@ -14,55 +14,36 @@ type ClinicsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-function addPresenceFilters(
-  whereClauses: Prisma.ClinicWhereInput[],
-  field: "websiteUrl" | "whatsapp" | "googleMapsUrl" | "yelpUrl",
-) {
-  whereClauses.push({
-    [field]: { not: null },
-  });
-  whereClauses.push({
-    NOT: {
-      [field]: "",
-    },
-  });
-}
-
 export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
   const filters = parseClinicFilters(await searchParams);
   const sessionId = getSessionIdFromCookies(await cookies());
-  const whereClauses: Prisma.ClinicWhereInput[] = [];
-
-  if (filters.q) {
-    whereClauses.push({
-      name: {
-        contains: filters.q,
-        mode: "insensitive",
+  const [neighborhoods, procedures] = await Promise.all([
+    db.neighborhood.findMany({
+      orderBy: {
+        name: "asc",
       },
-    });
-  }
-
-  if (filters.hasWebsite) {
-    addPresenceFilters(whereClauses, "websiteUrl");
-  }
-  if (filters.hasWhatsapp) {
-    addPresenceFilters(whereClauses, "whatsapp");
-  }
-  if (filters.hasGoogle) {
-    addPresenceFilters(whereClauses, "googleMapsUrl");
-  }
-  if (filters.hasYelp) {
-    addPresenceFilters(whereClauses, "yelpUrl");
-  }
-
-  const orderBy =
-    filters.sort === "newest"
-      ? { createdAt: "desc" as const }
-      : { name: filters.sort === "name_desc" ? ("desc" as const) : ("asc" as const) };
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    }),
+    db.procedure.findMany({
+      orderBy: {
+        name: "asc",
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    }),
+  ]);
+  const query = buildClinicQuery(filters);
 
   const clinics = await db.clinic.findMany({
-    where: whereClauses.length > 0 ? { AND: whereClauses } : undefined,
-    orderBy,
+    where: query.where,
+    orderBy: query.orderBy,
     select: {
       id: true,
       name: true,
@@ -134,6 +115,38 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
             <option value="name_asc">Name (A-Z)</option>
             <option value="name_desc">Name (Z-A)</option>
             <option value="newest">Newest</option>
+          </select>
+        </div>
+        <div style={{ marginBottom: "0.5rem" }}>
+          <label htmlFor="clinics-neighborhood">Neighborhood</label>
+          <select
+            id="clinics-neighborhood"
+            name="neighborhood"
+            defaultValue={filters.neighborhood ?? ""}
+            style={{ marginLeft: "0.5rem" }}
+          >
+            <option value="">All neighborhoods</option>
+            {neighborhoods.map((neighborhood) => (
+              <option key={neighborhood.id} value={neighborhood.slug}>
+                {neighborhood.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div style={{ marginBottom: "0.5rem" }}>
+          <label htmlFor="clinics-procedure">Procedure</label>
+          <select
+            id="clinics-procedure"
+            name="procedure"
+            defaultValue={filters.procedure ?? ""}
+            style={{ marginLeft: "0.5rem" }}
+          >
+            <option value="">All procedures</option>
+            {procedures.map((procedure) => (
+              <option key={procedure.id} value={procedure.slug}>
+                {procedure.name}
+              </option>
+            ))}
           </select>
         </div>
         <button type="submit">Apply filters</button>
