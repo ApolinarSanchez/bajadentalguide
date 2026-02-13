@@ -25,6 +25,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bdg?schema=public
       ADMIN_USER: admin
       ADMIN_PASS: admin
+      BASE_URL: http://127.0.0.1:3000
     defaults:
       run:
         working-directory: web

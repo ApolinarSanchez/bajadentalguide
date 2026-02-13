@@ -82,3 +82,28 @@ model Review {
   @@index([status])
   @@unique([clinicId, sessionId])
 }
+
+model SessionProfile {
+  sessionId         String   @id
+  email             String?
+  emailOptIn        Boolean  @default(false)
+  emailCapturedAt   DateTime?
+  unsubscribedAt    DateTime?
+  unsubscribeToken  String   @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  emailLogs         EmailLog[]
+}
+
+model EmailLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  sessionId String
+  email     String
+  template  String
+  status    String
+  error     String?
+  createdAt DateTime @default(now())
+  session   SessionProfile @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@index([sessionId])
+}

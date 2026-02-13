@@ -1,5 +1,7 @@
 import { SaveClinicButton } from "@/components/SaveClinicButton";
+import { SessionEmailCaptureForm } from "@/components/SessionEmailCaptureForm";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
+import { db } from "@/lib/db";
 import { getSessionIdFromCookies } from "@/lib/session";
 import { listSavedClinics } from "@/lib/shortlist";
 import { cookies } from "next/headers";
@@ -10,10 +12,25 @@ export const dynamic = "force-dynamic";
 export default async function ShortlistPage() {
   const sessionId = getSessionIdFromCookies(await cookies());
   const savedClinics = sessionId ? await listSavedClinics(sessionId) : [];
+  const profile = sessionId
+    ? await db.sessionProfile.findUnique({
+        where: {
+          sessionId,
+        },
+        select: {
+          email: true,
+          emailOptIn: true,
+        },
+      })
+    : null;
 
   return (
     <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>Shortlist</h1>
+      <SessionEmailCaptureForm
+        currentEmail={profile?.email}
+        currentOptIn={Boolean(profile?.emailOptIn)}
+      />
       {savedClinics.length === 0 ? (
         <>
           <p>No saved clinics yet</p>
