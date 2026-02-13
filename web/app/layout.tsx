@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import "./globals.css";
@@ -62,14 +61,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="siteShell">
         {process.env.NODE_ENV === "development" ? (
-          <Script id="extension-error-guard" strategy="beforeInteractive">
-            {extensionErrorGuardScript}
-          </Script>
+          <script
+            id="extension-error-guard"
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: extensionErrorGuardScript }}
+          />
         ) : null}
+        <a className="skipLink" href="#content">
+          Skip to content
+        </a>
         <Header />
-        <div>{children}</div>
+        <main id="content" className="container siteMain">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

@@ -2,13 +2,26 @@ import Link from "next/link";
 
 export function Header() {
   return (
-    <header style={{ borderBottom: "1px solid #ddd", padding: "1rem 2rem", fontFamily: "sans-serif" }}>
-      <nav style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        <Link href="/clinics">Clinics</Link>
-        <Link href="/procedures">Procedures</Link>
-        <Link href="/neighborhoods">Neighborhoods</Link>
-        <Link href="/shortlist">Shortlist</Link>
-      </nav>
+    <header className="siteHeader">
+      <div className="container siteHeaderInner">
+        <Link href="/" className="siteBrand">
+          BajaDentalGuide
+        </Link>
+        <nav aria-label="Main" className="siteNav">
+          <Link href="/clinics" className="siteNavLink">
+            Clinics
+          </Link>
+          <Link href="/procedures" className="siteNavLink">
+            Procedures
+          </Link>
+          <Link href="/neighborhoods" className="siteNavLink">
+            Neighborhoods
+          </Link>
+          <Link href="/shortlist" className="siteNavLink">
+            Shortlist
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }
