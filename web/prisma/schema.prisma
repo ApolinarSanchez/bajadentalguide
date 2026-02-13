@@ -11,6 +11,7 @@ model Clinic {
   id            String   @id @default(uuid()) @db.Uuid
   name          String
   slug          String   @unique
+  neighborhoodId String? @db.Uuid
   addressLine1  String?
   city          String   @default("Tijuana")
   state         String   @default("BC")
@@ -25,8 +26,43 @@ model Clinic {
   events        Event[]
   savedClinics  SavedClinic[]
   reviews       Review[]
+  neighborhood  Neighborhood? @relation(fields: [neighborhoodId], references: [id], onDelete: SetNull)
+  clinicProcedures ClinicProcedure[]
 
   @@index([slug])
+  @@index([neighborhoodId])
+}
+
+model Neighborhood {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  clinics     Clinic[]
+}
+
+model Procedure {
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String
+  slug            String   @unique
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  clinicProcedures ClinicProcedure[]
+}
+
+model ClinicProcedure {
+  clinicId     String   @db.Uuid
+  procedureId  String   @db.Uuid
+  createdAt    DateTime @default(now())
+  clinic       Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  procedure    Procedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+
+  @@id([clinicId, procedureId])
+  @@index([clinicId])
+  @@index([procedureId])
 }
 
 enum ReviewStatus {

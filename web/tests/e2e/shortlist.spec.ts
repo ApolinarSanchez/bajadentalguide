@@ -10,8 +10,20 @@ async function saveFirstClinicFromList(page: Page): Promise<string> {
     .innerText())
     .trim();
 
+  const toggleButton = firstClinic.getByRole("button", { name: /Save|Saved/ });
+  if ((await toggleButton.textContent())?.trim() === "Saved") {
+    await toggleButton.click();
+    await expect(firstClinic.getByRole("button", { name: "Save" })).toBeVisible();
+  }
+
+  const toggleResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/shortlist/toggle") &&
+      response.request().method() === "POST",
+  );
   await firstClinic.getByRole("button", { name: "Save" }).click();
-  await expect(firstClinic.getByRole("button", { name: "Saved" })).toBeVisible();
+  const toggleResponse = await toggleResponsePromise;
+  expect(toggleResponse.ok()).toBeTruthy();
 
   return clinicName;
 }

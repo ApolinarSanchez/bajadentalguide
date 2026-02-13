@@ -3,6 +3,57 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
+const TAXONOMY_NEIGHBORHOODS = [
+  {
+    name: "Zona Río",
+    slug: "zona-rio",
+    description: "Business district with clinics near major medical corridors.",
+  },
+  {
+    name: "Centro",
+    slug: "centro",
+    description: "Central district with walkable access and transit options.",
+  },
+  {
+    name: "Otay",
+    slug: "otay",
+    description: "Area close to border crossings and commercial zones.",
+  },
+  {
+    name: "Playas de Tijuana",
+    slug: "playas-de-tijuana",
+    description: "Coastal neighborhood serving west-side communities.",
+  },
+];
+
+const TAXONOMY_PROCEDURES = [
+  {
+    name: "Dental Implants",
+    slug: "dental-implants",
+    description: "Implant-based restoration options.",
+  },
+  {
+    name: "All-on-4",
+    slug: "all-on-4",
+    description: "Full-arch implant restoration with four implants.",
+  },
+  {
+    name: "Crowns",
+    slug: "crowns",
+    description: "Tooth-shaped caps used to restore damaged teeth.",
+  },
+  {
+    name: "Veneers",
+    slug: "veneers",
+    description: "Thin shells placed over front tooth surfaces.",
+  },
+  {
+    name: "Root Canal",
+    slug: "root-canal",
+    description: "Endodontic treatment for infected tooth pulp.",
+  },
+];
+
 function slugify(value) {
   return value
     .normalize("NFD")
@@ -69,19 +120,92 @@ function toSeedClinics() {
 }
 
 async function main() {
-  const clinics = toSeedClinics();
-
-  await Promise.all(
-    clinics.map((clinic) =>
-      prisma.clinic.upsert({
-        where: { slug: clinic.slug },
-        update: clinic,
-        create: clinic,
+  const neighborhoods = await Promise.all(
+    TAXONOMY_NEIGHBORHOODS.map((neighborhood) =>
+      prisma.neighborhood.upsert({
+        where: {
+          slug: neighborhood.slug,
+        },
+        update: neighborhood,
+        create: neighborhood,
+        select: {
+          id: true,
+          slug: true,
+        },
       }),
     ),
   );
 
+  const procedures = await Promise.all(
+    TAXONOMY_PROCEDURES.map((procedure) =>
+      prisma.procedure.upsert({
+        where: {
+          slug: procedure.slug,
+        },
+        update: procedure,
+        create: procedure,
+        select: {
+          id: true,
+          slug: true,
+        },
+      }),
+    ),
+  );
+
+  const clinics = toSeedClinics();
+
+  const savedClinics = await Promise.all(
+    clinics.map((clinic, index) =>
+      prisma.clinic.upsert({
+        where: { slug: clinic.slug },
+        update: {
+          ...clinic,
+          neighborhoodId: neighborhoods[index % neighborhoods.length].id,
+        },
+        create: {
+          ...clinic,
+          neighborhoodId: neighborhoods[index % neighborhoods.length].id,
+        },
+        select: {
+          id: true,
+          slug: true,
+        },
+      }),
+    ),
+  );
+
+  const clinicIds = savedClinics.map((clinic) => clinic.id);
+
+  await prisma.clinicProcedure.deleteMany({
+    where: {
+      clinicId: {
+        in: clinicIds,
+      },
+    },
+  });
+
+  const clinicProcedureRows = savedClinics.flatMap((clinic, index) => {
+    const procedureIndexes = [
+      index % procedures.length,
+      (index + 1) % procedures.length,
+      ...(index % 2 === 0 ? [(index + 2) % procedures.length] : []),
+    ];
+
+    const uniqueProcedureIndexes = [...new Set(procedureIndexes)];
+
+    return uniqueProcedureIndexes.map((procedureIndex) => ({
+      clinicId: clinic.id,
+      procedureId: procedures[procedureIndex].id,
+    }));
+  });
+
+  await prisma.clinicProcedure.createMany({
+    data: clinicProcedureRows,
+    skipDuplicates: true,
+  });
+
   console.log(`Seeded ${clinics.length} clinics`);
+  console.log(`Seeded ${neighborhoods.length} neighborhoods and ${procedures.length} procedures`);
 }
 
 main()

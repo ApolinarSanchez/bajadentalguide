@@ -1,5 +1,3 @@
-import type { ReviewStatus } from "@prisma/client";
-
 const MIN_BODY_LENGTH = 40;
 const MAX_BODY_LENGTH = 4000;
 
@@ -24,7 +22,7 @@ export type ValidationResult =
     };
 
 export type ReviewForAggregate = {
-  status: ReviewStatus | string;
+  status: string;
   ratingOverall: number;
 };
 

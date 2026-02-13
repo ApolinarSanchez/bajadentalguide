@@ -28,7 +28,9 @@ describe("validateReview", () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.errors).toContain("body must be at least 40 characters.");
+    if (!result.ok) {
+      expect(result.errors).toContain("body must be at least 40 characters.");
+    }
   });
 
   it("accepts valid payload", () => {

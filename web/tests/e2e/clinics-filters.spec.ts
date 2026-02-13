@@ -17,6 +17,7 @@ test("hasWebsite filter only shows clinics with Website links", async ({ page })
 
   await page.getByLabel("Has website").check();
   await page.getByRole("button", { name: "Apply filters" }).click();
+  await expect(page.getByTestId("results-count")).toContainText(/Results: [1-9]\d*/);
 
   const clinicRows = page.getByTestId("clinic-item");
   const rowCount = await clinicRows.count();

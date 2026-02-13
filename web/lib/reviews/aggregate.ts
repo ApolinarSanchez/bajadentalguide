@@ -1,4 +1,4 @@
-import type { ReviewStatus } from "@prisma/client";
+import { ReviewStatus } from "@prisma/client";
 import type { ReviewForAggregate } from "./validateReview";
 
 export function computeAverageRating(reviews: ReviewForAggregate[]) {

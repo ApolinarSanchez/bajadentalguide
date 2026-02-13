@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactElement } from "react";
 import { ReviewModerationActions } from "@/components/admin/ReviewModerationActions";
 import { db } from "@/lib/db";
 import { ReviewStatus } from "@prisma/client";
@@ -26,7 +27,7 @@ function ReviewSection({
       slug: string;
     };
   }>;
-  actions?: (reviewId: string) => JSX.Element | null;
+  actions?: (reviewId: string) => ReactElement | null;
 }) {
   return (
     <section style={{ marginBottom: "1.5rem" }}>

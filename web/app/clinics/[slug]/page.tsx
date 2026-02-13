@@ -6,6 +6,7 @@ import { computeAverageRating } from "@/lib/reviews/aggregate";
 import { getSessionIdFromCookies } from "@/lib/session";
 import { isClinicSaved } from "@/lib/shortlist";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReviewStatus } from "@prisma/client";
 
@@ -30,6 +31,28 @@ export default async function ClinicProfilePage({
       id: true,
       name: true,
       slug: true,
+      neighborhood: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      clinicProcedures: {
+        select: {
+          procedure: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+        orderBy: {
+          procedure: {
+            name: "asc",
+          },
+        },
+      },
       city: true,
       state: true,
       country: true,
@@ -54,6 +77,7 @@ export default async function ClinicProfilePage({
     },
     select: {
       id: true,
+      status: true,
       ratingOverall: true,
       procedure: true,
       visitMonth: true,
@@ -102,6 +126,23 @@ export default async function ClinicProfilePage({
       <p>
         Location: {clinic.city}, {clinic.state}, {clinic.country}
       </p>
+      {clinic.neighborhood ? (
+        <p>
+          Neighborhood: {clinic.neighborhood.name} (
+          <Link href={`/neighborhoods/${clinic.neighborhood.slug}`}>view neighborhood</Link>)
+        </p>
+      ) : null}
+      {clinic.clinicProcedures.length > 0 ? (
+        <p>
+          Procedures:{" "}
+          {clinic.clinicProcedures.map((item, index) => (
+            <span key={item.procedure.id}>
+              <Link href={`/procedures/${item.procedure.slug}`}>{item.procedure.name}</Link>
+              {index < clinic.clinicProcedures.length - 1 ? ", " : ""}
+            </span>
+          ))}
+        </p>
+      ) : null}
       {clinic.addressLine1 ? <p>Address: {clinic.addressLine1}</p> : null}
       {clinic.phone ? <p>Phone: {clinic.phone}</p> : null}
       {clinic.whatsapp ? <p>WhatsApp: {clinic.whatsapp}</p> : null}

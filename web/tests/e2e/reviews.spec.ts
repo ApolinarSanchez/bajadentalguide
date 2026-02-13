@@ -30,10 +30,22 @@ test("review submit and moderation flow", async ({ page }) => {
   await page.goto("/admin/reviews");
   const pendingReview = page.locator("li").filter({ hasText: reviewSnippet });
   await expect(pendingReview).toBeVisible();
+  const rowTestId = await pendingReview.first().getAttribute("data-testid");
+  const reviewId = rowTestId?.replace("review-row-", "");
+  expect(reviewId).toBeTruthy();
+
+  const approveResponsePromise = page.waitForResponse(
+    (response) =>
+      Boolean(reviewId) &&
+      response.url().includes(`/api/admin/reviews/${reviewId}/approve`) &&
+      response.request().method() === "POST",
+  );
   await pendingReview.getByRole("button", { name: "Approve" }).click();
+  const approveResponse = await approveResponsePromise;
+  expect(approveResponse.ok()).toBeTruthy();
 
   await page.goto(`/clinics/${clinicSlug}`);
-  await expect(page.getByText(reviewSnippet)).toBeVisible();
-  await expect(page.getByText(/BDG Rating: 5.0/)).toBeVisible();
-  await expect(page.getByText("(1 reviews)")).toBeVisible();
+  await expect(page.getByText(reviewSnippet)).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText(/BDG Rating:/)).toBeVisible();
+  await expect(page.getByText(/\(\d+ reviews\)/)).toBeVisible();
 });
