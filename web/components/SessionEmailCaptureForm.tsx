@@ -35,6 +35,10 @@ export function SessionEmailCaptureForm({ currentEmail, currentOptIn }: SessionE
       });
       const payload = (await response.json()) as { message?: string };
       if (!response.ok) {
+        if (response.status === 429) {
+          setMessage("Too many requests. Please try again later.");
+          return;
+        }
         setMessage(payload.message ?? "Failed to save email.");
         return;
       }

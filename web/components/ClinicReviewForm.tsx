@@ -52,6 +52,10 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
 
       const responseBody = (await response.json()) as { message?: string; ok?: boolean };
       if (!response.ok) {
+        if (response.status === 429) {
+          setMessage("Too many review submissions. Please try again later.");
+          return;
+        }
         setMessage(responseBody.message || "Unable to submit review.");
         return;
       }
