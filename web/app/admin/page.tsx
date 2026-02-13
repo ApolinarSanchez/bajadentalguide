@@ -27,6 +27,9 @@ export default async function AdminPage() {
         <Link href="/admin/reviews">Moderate reviews</Link>
       </p>
       <p>
+        <Link href="/admin/analytics">Analytics dashboard</Link>
+      </p>
+      <p>
         <Link href="/admin/sessions">Session email profiles</Link>
       </p>
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
