@@ -149,6 +149,10 @@ export default async function ClinicProfilePage({
       {clinic.websiteUrl || clinic.whatsapp || clinic.googleMapsUrl || clinic.yelpUrl ? (
         <section>
           <h2>Links</h2>
+          <p>
+            External links are provided for convenience. You may be redirected to a third‑party
+            website or service.
+          </p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             {clinic.websiteUrl ? (
               <TrackedOutboundLink href={`/out/${clinic.slug}?dest=website`}>
@@ -174,6 +178,7 @@ export default async function ClinicProfilePage({
       <p>{ratingText}</p>
       <section>
         <h2>Published BDG reviews</h2>
+        <p>Reviews are user‑submitted and moderated. BajaDentalGuide does not provide medical advice.</p>
         {publishedReviews.length === 0 ? (
           <p>No published reviews yet.</p>
         ) : (

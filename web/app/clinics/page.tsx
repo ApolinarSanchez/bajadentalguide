@@ -151,6 +151,11 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
         </div>
         <button type="submit">Apply filters</button>
       </form>
+      <p>
+        Note: External links (clinic websites, WhatsApp, and third‑party listings) are provided for
+        convenience. BajaDentalGuide does not import third‑party review content into BDG ratings.
+        This site does not provide medical advice.
+      </p>
       <p data-testid="results-count">Results: {clinics.length}</p>
       {clinics.length === 0 ? (
         <p>No clinics found. Seed the database to load clinic listings.</p>

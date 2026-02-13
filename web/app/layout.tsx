@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -66,7 +68,9 @@ export default function RootLayout({
             {extensionErrorGuardScript}
           </Script>
         ) : null}
-        {children}
+        <Header />
+        <div>{children}</div>
+        <Footer />
       </body>
     </html>
   );
