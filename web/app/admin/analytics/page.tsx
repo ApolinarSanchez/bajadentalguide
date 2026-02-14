@@ -72,135 +72,135 @@ export default async function AdminAnalyticsPage() {
   const outboundRows = ["website", "whatsapp", "google", "yelp"] as const;
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Analytics</h1>
-      <p>
-        <Link href="/admin">Back to admin</Link>
-      </p>
+    <section className="stack">
+      <header className="pageHeader stack">
+        <div className="pageTitleRow">
+          <h1>Analytics</h1>
+          <Link href="/admin" className="btn btnSecondary btnSm">
+            Back to admin
+          </Link>
+        </div>
+        <p className="pageSubtitle">
+          Last 7-day and 30-day activity snapshots across outbound clicks, shortlist adds, and
+          review activity.
+        </p>
+      </header>
 
-      <section style={{ marginBottom: "1.5rem" }}>
-        <h2>Summary</h2>
-        <table style={{ borderCollapse: "collapse", width: "100%" }}>
-          <thead>
-            <tr>
-              <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                Metric
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                Last 7 days
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                Last 30 days
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {summaryRows.map((row) => (
-              <tr key={row.label}>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{row.label}</td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{row.sevenDayValue}</td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{row.thirtyDayValue}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <section style={{ marginBottom: "1.5rem" }}>
-        <h2>Outbound by destination</h2>
-        <table style={{ borderCollapse: "collapse", width: "100%" }}>
-          <thead>
-            <tr>
-              <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                Destination
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                Last 7 days
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                Last 30 days
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {outboundRows.map((dest) => (
-              <tr key={dest}>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{dest}</td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{outboundByDest7[dest]}</td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{outboundByDest30[dest]}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <section style={{ marginBottom: "1.5rem" }}>
-        <h2>Top clinics by outbound clicks</h2>
-        {topOutbound7.length === 0 ? (
-          <p>No outbound click data in the last 7 days.</p>
-        ) : (
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                  Clinic
-                </th>
-                <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                  Clicks
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {topOutbound7.map((clinic) => (
-                <tr key={clinic.clinicId}>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                    <Link href={`/clinics/${clinic.clinicSlug}`}>{clinic.clinicName}</Link>
-                  </td>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{clinic.count}</td>
+      <div className="grid">
+        <section className="card stack">
+          <h2>Summary</h2>
+          <div className="tableWrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Last 7 days</th>
+                  <th>Last 30 days</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+              </thead>
+              <tbody>
+                {summaryRows.map((row) => (
+                  <tr key={row.label}>
+                    <td>{row.label}</td>
+                    <td>{row.sevenDayValue}</td>
+                    <td>{row.thirtyDayValue}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-      <section style={{ marginBottom: "1.5rem" }}>
-        <h2>Top clinics by shortlist adds</h2>
-        {topShortlist7.length === 0 ? (
-          <p>No shortlist add data in the last 7 days.</p>
-        ) : (
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                  Clinic
-                </th>
-                <th style={{ borderBottom: "1px solid #ddd", textAlign: "left", padding: "0.5rem" }}>
-                  Adds
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {topShortlist7.map((clinic) => (
-                <tr key={clinic.clinicId}>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                    <Link href={`/clinics/${clinic.clinicSlug}`}>{clinic.clinicName}</Link>
-                  </td>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{clinic.count}</td>
+        <section className="card stack">
+          <h2>Outbound by destination</h2>
+          <div className="tableWrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Destination</th>
+                  <th>Last 7 days</th>
+                  <th>Last 30 days</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+              </thead>
+              <tbody>
+                {outboundRows.map((dest) => (
+                  <tr key={dest}>
+                    <td>{dest}</td>
+                    <td>{outboundByDest7[dest]}</td>
+                    <td>{outboundByDest30[dest]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
 
-      <section>
+      <div className="grid2">
+        <section className="card stack">
+          <h2>Top clinics by outbound clicks</h2>
+          {topOutbound7.length === 0 ? (
+            <p>No outbound click data in the last 7 days.</p>
+          ) : (
+            <div className="tableWrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Clinic</th>
+                    <th>Clicks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topOutbound7.map((clinic) => (
+                    <tr key={clinic.clinicId}>
+                      <td>
+                        <Link href={`/clinics/${clinic.clinicSlug}`}>{clinic.clinicName}</Link>
+                      </td>
+                      <td>{clinic.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="card stack">
+          <h2>Top clinics by shortlist adds</h2>
+          {topShortlist7.length === 0 ? (
+            <p>No shortlist add data in the last 7 days.</p>
+          ) : (
+            <div className="tableWrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Clinic</th>
+                    <th>Adds</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topShortlist7.map((clinic) => (
+                    <tr key={clinic.clinicId}>
+                      <td>
+                        <Link href={`/clinics/${clinic.clinicSlug}`}>{clinic.clinicName}</Link>
+                      </td>
+                      <td>{clinic.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <section className="card stack">
         <h2>Pending reviews</h2>
         <p>Pending reviews: {reviewCounts30.pendingOverall}</p>
         <p>
           <Link href="/admin/reviews">Go to moderation queue</Link>
         </p>
       </section>
-    </main>
+    </section>
   );
 }

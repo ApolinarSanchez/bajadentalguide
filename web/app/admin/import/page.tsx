@@ -82,27 +82,35 @@ export default function AdminImportPage() {
   }
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Import Clinics CSV</h1>
-      <p>
-        <Link href="/admin">Back to admin list</Link>
-      </p>
+    <section className="stack">
+      <header className="pageHeader stack">
+        <div className="pageTitleRow">
+          <h1>Import Clinics CSV</h1>
+          <Link href="/admin" className="btn btnSecondary btnSm">
+            Back to admin list
+          </Link>
+        </div>
+        <p className="pageSubtitle">
+          Upload a CSV, preview parsed rows, then validate or import clinics.
+        </p>
+      </header>
 
-      <label htmlFor="clinic-csv-input" style={{ display: "block", marginBottom: "0.5rem" }}>
-        CSV file
-      </label>
-      <input
-        id="clinic-csv-input"
-        name="clinic-csv-input"
-        type="file"
-        accept=".csv,text/csv"
-        onChange={handleCsvSelection}
-      />
-
-      {fileName ? <p>Selected file: {fileName}</p> : null}
+      <section className="card stack" aria-label="CSV upload">
+        <div className="field">
+          <label htmlFor="clinic-csv-input">CSV file</label>
+          <input
+            id="clinic-csv-input"
+            name="clinic-csv-input"
+            type="file"
+            accept=".csv,text/csv"
+            onChange={handleCsvSelection}
+          />
+        </div>
+        {fileName ? <p>Selected file: {fileName}</p> : null}
+      </section>
 
       {parseErrors.length > 0 ? (
-        <section aria-label="CSV validation errors">
+        <section aria-label="CSV validation errors" className="card stack">
           <h2>Validation errors</h2>
           <ul>
             {parseErrors.map((error, index) => (
@@ -115,45 +123,36 @@ export default function AdminImportPage() {
       ) : null}
 
       {rows.length > 0 ? (
-        <section aria-label="CSV preview">
+        <section aria-label="CSV preview" className="card stack">
           <h2>Preview ({rows.length} rows)</h2>
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: "0.5rem" }}>
-                  Name
-                </th>
-                <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: "0.5rem" }}>
-                  Slug
-                </th>
-                <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: "0.5rem" }}>
-                  Website
-                </th>
-                <th style={{ textAlign: "left", borderBottom: "1px solid #ddd", padding: "0.5rem" }}>
-                  WhatsApp
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {previewRows.map((row, index) => (
-                <tr key={`${row.slug}-${index}`}>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{row.name}</td>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{row.slug}</td>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                    {row.websiteUrl ?? "-"}
-                  </td>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                    {row.whatsapp ?? "-"}
-                  </td>
+          <div className="tableWrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Slug</th>
+                  <th>Website</th>
+                  <th>WhatsApp</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {previewRows.map((row, index) => (
+                  <tr key={`${row.slug}-${index}`}>
+                    <td>{row.name}</td>
+                    <td>{row.slug}</td>
+                    <td>{row.websiteUrl ?? "-"}</td>
+                    <td>{row.whatsapp ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       ) : null}
 
-      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
+      <div className="fieldRow">
         <button
+          className="btn btnSecondary"
           type="button"
           onClick={() => submitImport(true)}
           disabled={importState.status === "running" || rows.length === 0 || hasBlockingClientErrors}
@@ -161,6 +160,7 @@ export default function AdminImportPage() {
           Validate on server (dry run)
         </button>
         <button
+          className="btn btnPrimary"
           type="button"
           onClick={() => submitImport(false)}
           disabled={importState.status === "running" || rows.length === 0 || hasBlockingClientErrors}
@@ -169,12 +169,17 @@ export default function AdminImportPage() {
         </button>
       </div>
 
-      {importState.message ? <p>{importState.message}</p> : null}
+      {importState.message ? (
+        <p className={importState.status === "error" ? "alert" : undefined}>{importState.message}</p>
+      ) : null}
       {importState.result ? (
-        <section aria-label="Import result">
-          <p>Created: {importState.result.createdCount}</p>
-          <p>Updated: {importState.result.updatedCount}</p>
-          <p>Errors: {importState.result.errorCount}</p>
+        <section aria-label="Import result" className="card stack">
+          <h2>Import result</h2>
+          <div className="row">
+            <span className="badge">Created: {importState.result.createdCount}</span>
+            <span className="badge">Updated: {importState.result.updatedCount}</span>
+            <span className="badge">Errors: {importState.result.errorCount}</span>
+          </div>
           {importState.result.errors.length > 0 ? (
             <ul>
               {importState.result.errors.map((error, index) => (
@@ -186,6 +191,6 @@ export default function AdminImportPage() {
           ) : null}
         </section>
       ) : null}
-    </main>
+    </section>
   );
 }
