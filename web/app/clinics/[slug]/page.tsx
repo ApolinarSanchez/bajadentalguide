@@ -151,6 +151,11 @@ export default async function ClinicProfilePage({
         </div>
         <p className="pageSubtitle">Clinic profile</p>
         <p className="pageSubtitle">Slug: {clinic.slug}</p>
+        <div className="row">
+          <Link href={`/clinics/${clinic.slug}/suggest-edit`} className="btn btnSecondary btnSm">
+            Suggest an edit
+          </Link>
+        </div>
         {!clinic.isPublished ? (
           <Alert variant="info">
             This listing is unverified and may have limited contact details. Please confirm details

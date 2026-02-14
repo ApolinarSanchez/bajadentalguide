@@ -29,6 +29,7 @@ model Clinic {
   events        Event[]
   savedClinics  SavedClinic[]
   reviews       Review[]
+  editSuggestions ClinicEditSuggestion[]
   neighborhood  Neighborhood? @relation(fields: [neighborhoodId], references: [id], onDelete: SetNull)
   clinicProcedures ClinicProcedure[]
 
@@ -36,6 +37,29 @@ model Clinic {
   @@index([neighborhoodId])
   @@index([isPublished])
   @@index([isFeatured, featuredRank])
+}
+
+enum ClinicEditSuggestionStatus {
+  PENDING
+  APPLIED
+  REJECTED
+}
+
+model ClinicEditSuggestion {
+  id                  String                    @id @default(uuid()) @db.Uuid
+  clinicId            String                    @db.Uuid
+  suggestedPhone      String?
+  suggestedWhatsapp   String?
+  suggestedWebsiteUrl String?
+  suggestedYelpUrl    String?
+  suggestedNote       String?
+  contactEmail        String?
+  status              ClinicEditSuggestionStatus @default(PENDING)
+  createdAt           DateTime                  @default(now())
+  clinic              Clinic                    @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([status, createdAt])
 }
 
 model Neighborhood {
