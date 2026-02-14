@@ -30,6 +30,7 @@ model Clinic {
   savedClinics  SavedClinic[]
   reviews       Review[]
   editSuggestions ClinicEditSuggestion[]
+  claimRequests ClinicClaimRequest[]
   neighborhood  Neighborhood? @relation(fields: [neighborhoodId], references: [id], onDelete: SetNull)
   clinicProcedures ClinicProcedure[]
 
@@ -37,6 +38,26 @@ model Clinic {
   @@index([neighborhoodId])
   @@index([isPublished])
   @@index([isFeatured, featuredRank])
+}
+
+enum ClinicClaimRequestStatus {
+  PENDING
+  PROCESSED
+}
+
+model ClinicClaimRequest {
+  id        String                  @id @default(uuid()) @db.Uuid
+  clinicId  String                  @db.Uuid
+  name      String
+  email     String
+  role      String?
+  message   String?
+  status    ClinicClaimRequestStatus @default(PENDING)
+  createdAt DateTime                @default(now())
+  clinic    Clinic                  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([status, createdAt])
 }
 
 enum ClinicEditSuggestionStatus {

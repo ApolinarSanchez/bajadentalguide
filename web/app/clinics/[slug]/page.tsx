@@ -152,6 +152,9 @@ export default async function ClinicProfilePage({
         <p className="pageSubtitle">Clinic profile</p>
         <p className="pageSubtitle">Slug: {clinic.slug}</p>
         <div className="row">
+          <Link href={`/clinics/${clinic.slug}/claim`} className="btn btnSecondary btnSm">
+            Claim this listing
+          </Link>
           <Link href={`/clinics/${clinic.slug}/suggest-edit`} className="btn btnSecondary btnSm">
             Suggest an edit
           </Link>

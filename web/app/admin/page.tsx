@@ -74,6 +74,9 @@ export default async function AdminPage() {
           <Link href="/admin/reviews" className="btn btnGhost">
             Moderate reviews
           </Link>
+          <Link href="/admin/claims" className="btn btnGhost">
+            Claim requests
+          </Link>
           <Link href="/admin/suggestions" className="btn btnGhost">
             Edit suggestions
           </Link>
