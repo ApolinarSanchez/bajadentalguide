@@ -376,6 +376,54 @@ button:disabled {
   gap: var(--space-3);
 }
 
+.directoryLayout {
+  display: grid;
+  align-items: start;
+  gap: var(--space-4);
+  grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
+}
+
+.directorySidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text);
+}
+
+.checkboxLabel input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border-radius: 0.25rem;
+  box-shadow: none;
+}
+
+.clinicsApplyButton {
+  width: 100%;
+}
+
+.clinicsCardTitle {
+  margin: 0;
+}
+
+.clinicsActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -491,5 +539,15 @@ button:disabled {
 @media (max-width: 900px) {
   .grid2 {
     grid-template-columns: 1fr;
+  }
+
+  .directoryLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 640px) {
+  .clinicsApplyButton {
+    width: fit-content;
   }
 }

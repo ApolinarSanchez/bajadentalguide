@@ -10,6 +10,7 @@ type SaveClinicButtonProps = {
   source: ShortlistSource;
   showRemoveLabel?: boolean;
   refreshOnChange?: boolean;
+  className?: string;
 };
 
 export function SaveClinicButton({
@@ -18,6 +19,7 @@ export function SaveClinicButton({
   source,
   showRemoveLabel = false,
   refreshOnChange = false,
+  className = "btn btnSecondary btnSm",
 }: SaveClinicButtonProps) {
   const router = useRouter();
   const [saved, setSaved] = useState(initialSaved);
@@ -65,7 +67,7 @@ export function SaveClinicButton({
   const label = saved ? (showRemoveLabel ? "Remove" : "Saved") : "Save";
 
   return (
-    <button type="button" onClick={handleToggle} disabled={pending}>
+    <button type="button" className={className} onClick={handleToggle} disabled={pending}>
       {pending ? "Saving..." : label}
     </button>
   );

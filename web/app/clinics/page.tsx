@@ -68,137 +68,172 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
   const savedClinicIds = buildSavedSet(savedRows);
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Clinics</h1>
-      <form method="get" style={{ marginBottom: "1rem" }}>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <label htmlFor="clinics-search-q">Search clinics</label>
-          <input
-            id="clinics-search-q"
-            name="q"
-            type="search"
-            defaultValue={filters.q}
-            style={{ marginLeft: "0.5rem" }}
-          />
+    <section className="stack">
+      <header className="pageHeader stack">
+        <div className="pageTitleRow">
+          <h1>Clinics</h1>
         </div>
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-          <label>
-            <input
-              type="checkbox"
-              name="hasWebsite"
-              value="1"
-              defaultChecked={filters.hasWebsite}
-            />{" "}
-            Has website
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              name="hasWhatsapp"
-              value="1"
-              defaultChecked={filters.hasWhatsapp}
-            />{" "}
-            Has WhatsApp
-          </label>
-          <label>
-            <input type="checkbox" name="hasGoogle" value="1" defaultChecked={filters.hasGoogle} />{" "}
-            Has Google
-          </label>
-          <label>
-            <input type="checkbox" name="hasYelp" value="1" defaultChecked={filters.hasYelp} /> Has
-            Yelp
-          </label>
-        </div>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <label htmlFor="clinics-sort">Sort</label>
-          <select id="clinics-sort" name="sort" defaultValue={filters.sort} style={{ marginLeft: "0.5rem" }}>
-            <option value="name_asc">Name (A-Z)</option>
-            <option value="name_desc">Name (Z-A)</option>
-            <option value="newest">Newest</option>
-          </select>
-        </div>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <label htmlFor="clinics-neighborhood">Neighborhood</label>
-          <select
-            id="clinics-neighborhood"
-            name="neighborhood"
-            defaultValue={filters.neighborhood ?? ""}
-            style={{ marginLeft: "0.5rem" }}
-          >
-            <option value="">All neighborhoods</option>
-            {neighborhoods.map((neighborhood) => (
-              <option key={neighborhood.id} value={neighborhood.slug}>
-                {neighborhood.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <label htmlFor="clinics-procedure">Procedure</label>
-          <select
-            id="clinics-procedure"
-            name="procedure"
-            defaultValue={filters.procedure ?? ""}
-            style={{ marginLeft: "0.5rem" }}
-          >
-            <option value="">All procedures</option>
-            {procedures.map((procedure) => (
-              <option key={procedure.id} value={procedure.slug}>
-                {procedure.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="submit">Apply filters</button>
-      </form>
-      <p>
-        Note: External links (clinic websites, WhatsApp, and third‑party listings) are provided for
-        convenience. BajaDentalGuide does not import third‑party review content into BDG ratings.
-        This site does not provide medical advice.
-      </p>
-      <p data-testid="results-count">Results: {clinics.length}</p>
-      {clinics.length === 0 ? (
-        <p>No clinics found. Seed the database to load clinic listings.</p>
-      ) : (
-        <ul style={{ paddingLeft: 0, listStyle: "none" }}>
-          {clinics.map((clinic) => (
-            <li
-              key={clinic.id}
-              data-testid="clinic-item"
-              style={{ border: "1px solid #ddd", borderRadius: "0.5rem", padding: "0.75rem", marginBottom: "0.75rem" }}
-            >
-              <p style={{ marginTop: 0 }}>
-                <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
-              </p>
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                <SaveClinicButton
-                  clinicId={clinic.id}
-                  initialSaved={savedClinicIds.has(clinic.id)}
-                  source="clinics_list"
-                />
-                {clinic.websiteUrl ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=website`}>
-                    Website
-                  </TrackedOutboundLink>
-                ) : null}
-                {clinic.whatsapp ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=whatsapp`}>
-                    WhatsApp
-                  </TrackedOutboundLink>
-                ) : null}
-                {clinic.googleMapsUrl ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=google`}>
-                    Google Listing
-                  </TrackedOutboundLink>
-                ) : null}
-                {clinic.yelpUrl ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=yelp`}>Yelp</TrackedOutboundLink>
-                ) : null}
+        <p className="pageSubtitle">
+          Browse Baja clinic profiles and filter by services and listing availability.
+        </p>
+      </header>
+
+      <div className="directoryLayout">
+        <aside className="directorySidebar">
+          <form method="get" className="card stack">
+            <div className="field">
+              <label htmlFor="clinics-search-q">Search clinics</label>
+              <input id="clinics-search-q" name="q" type="search" defaultValue={filters.q} />
+            </div>
+
+            <div className="field">
+              <span>Listing options</span>
+              <div className="checkboxGroup">
+                <label className="checkboxLabel">
+                  <input
+                    type="checkbox"
+                    name="hasWebsite"
+                    value="1"
+                    defaultChecked={filters.hasWebsite}
+                  />
+                  Has website
+                </label>
+                <label className="checkboxLabel">
+                  <input
+                    type="checkbox"
+                    name="hasWhatsapp"
+                    value="1"
+                    defaultChecked={filters.hasWhatsapp}
+                  />
+                  Has WhatsApp
+                </label>
+                <label className="checkboxLabel">
+                  <input
+                    type="checkbox"
+                    name="hasGoogle"
+                    value="1"
+                    defaultChecked={filters.hasGoogle}
+                  />
+                  Has Google
+                </label>
+                <label className="checkboxLabel">
+                  <input type="checkbox" name="hasYelp" value="1" defaultChecked={filters.hasYelp} />
+                  Has Yelp
+                </label>
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+            </div>
+
+            <div className="field">
+              <label htmlFor="clinics-sort">Sort</label>
+              <select id="clinics-sort" name="sort" defaultValue={filters.sort}>
+                <option value="name_asc">Name (A-Z)</option>
+                <option value="name_desc">Name (Z-A)</option>
+                <option value="newest">Newest</option>
+              </select>
+            </div>
+
+            <div className="field">
+              <label htmlFor="clinics-neighborhood">Neighborhood</label>
+              <select
+                id="clinics-neighborhood"
+                name="neighborhood"
+                defaultValue={filters.neighborhood ?? ""}
+              >
+                <option value="">All neighborhoods</option>
+                {neighborhoods.map((neighborhood) => (
+                  <option key={neighborhood.id} value={neighborhood.slug}>
+                    {neighborhood.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="field">
+              <label htmlFor="clinics-procedure">Procedure</label>
+              <select id="clinics-procedure" name="procedure" defaultValue={filters.procedure ?? ""}>
+                <option value="">All procedures</option>
+                {procedures.map((procedure) => (
+                  <option key={procedure.id} value={procedure.slug}>
+                    {procedure.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button type="submit" className="btn btnPrimary clinicsApplyButton">
+              Apply filters
+            </button>
+          </form>
+
+          <p className="alert">
+            Note: External links (clinic websites, WhatsApp, and third‑party listings) are provided
+            for convenience. BajaDentalGuide does not import third‑party review content into BDG
+            ratings. This site does not provide medical advice.
+          </p>
+        </aside>
+
+        <section className="stack">
+          <div className="row">
+            <span data-testid="results-count" className="badge">
+              Results: {clinics.length}
+            </span>
+          </div>
+
+          {clinics.length === 0 ? (
+            <p className="card">No clinics found. Seed the database to load clinic listings.</p>
+          ) : (
+            <ul className="cards">
+              {clinics.map((clinic) => (
+                <li key={clinic.id} data-testid="clinic-item" className="card stack">
+                  <p className="clinicsCardTitle">
+                    <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
+                  </p>
+                  <div className="clinicsActions">
+                    <SaveClinicButton
+                      clinicId={clinic.id}
+                      initialSaved={savedClinicIds.has(clinic.id)}
+                      source="clinics_list"
+                      className="btn btnSecondary btnSm"
+                    />
+                    {clinic.websiteUrl ? (
+                      <TrackedOutboundLink
+                        href={`/out/${clinic.slug}?dest=website`}
+                        className="btn btnSecondary btnSm"
+                      >
+                        Website
+                      </TrackedOutboundLink>
+                    ) : null}
+                    {clinic.whatsapp ? (
+                      <TrackedOutboundLink
+                        href={`/out/${clinic.slug}?dest=whatsapp`}
+                        className="btn btnSecondary btnSm"
+                      >
+                        WhatsApp
+                      </TrackedOutboundLink>
+                    ) : null}
+                    {clinic.googleMapsUrl ? (
+                      <TrackedOutboundLink
+                        href={`/out/${clinic.slug}?dest=google`}
+                        className="btn btnSecondary btnSm"
+                      >
+                        Google Listing
+                      </TrackedOutboundLink>
+                    ) : null}
+                    {clinic.yelpUrl ? (
+                      <TrackedOutboundLink
+                        href={`/out/${clinic.slug}?dest=yelp`}
+                        className="btn btnSecondary btnSm"
+                      >
+                        Yelp
+                      </TrackedOutboundLink>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+    </section>
   );
 }
