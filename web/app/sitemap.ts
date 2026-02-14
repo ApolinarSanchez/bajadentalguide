@@ -5,8 +5,17 @@ import { buildSitemap } from "@/lib/seo/buildSitemap";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl =
+    process.env.SITE_URL ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.BASE_URL ??
+    "http://localhost:3000";
+
   const [clinics, procedures, neighborhoods] = await Promise.all([
     db.clinic.findMany({
+      where: {
+        isPublished: true,
+      },
       select: {
         slug: true,
       },
@@ -24,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   return buildSitemap({
-    baseUrl: process.env.BASE_URL ?? "http://localhost:3000",
+    baseUrl,
     clinicSlugs: clinics.map((clinic) => clinic.slug),
     procedureSlugs: procedures.map((procedure) => procedure.slug),
     neighborhoodSlugs: neighborhoods.map((neighborhood) => neighborhood.slug),

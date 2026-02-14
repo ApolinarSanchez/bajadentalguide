@@ -2,10 +2,12 @@ import { SaveClinicButton } from "@/components/SaveClinicButton";
 import { ClinicReviewForm } from "@/components/ClinicReviewForm";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
 import { Alert } from "@/components/Alert";
+import { clinicMetadataRobots } from "@/lib/clinics/metadata";
 import { db } from "@/lib/db";
 import { computeAverageRating } from "@/lib/reviews/aggregate";
 import { getSessionIdFromCookies } from "@/lib/session";
 import { isClinicSaved } from "@/lib/shortlist";
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,6 +20,22 @@ type ClinicProfilePageProps = {
 };
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: ClinicProfilePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const clinic = await db.clinic.findUnique({
+    where: {
+      slug,
+    },
+    select: {
+      isPublished: true,
+    },
+  });
+
+  return {
+    robots: clinicMetadataRobots(clinic),
+  };
+}
 
 export default async function ClinicProfilePage({
   params,

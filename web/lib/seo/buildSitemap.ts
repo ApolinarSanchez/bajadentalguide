@@ -3,10 +3,8 @@ import type { MetadataRoute } from "next";
 export const STATIC_SITEMAP_PATHS = [
   "/",
   "/clinics",
-  "/shortlist",
   "/procedures",
   "/neighborhoods",
-  "/review-policy",
 ];
 
 export function buildSitemap({
