@@ -11,6 +11,7 @@ function baseFilters(): ClinicFilters {
     hasWhatsapp: false,
     hasGoogle: false,
     hasYelp: false,
+    includeUnverified: false,
     sort: "name_asc",
   };
 }
@@ -24,6 +25,9 @@ describe("buildClinicQuery", () => {
 
     expect(query.where).toMatchObject({
       AND: [
+        {
+          isPublished: true,
+        },
         {
           neighborhood: {
             slug: "zona-rio",
@@ -42,6 +46,9 @@ describe("buildClinicQuery", () => {
     expect(query.where).toMatchObject({
       AND: [
         {
+          isPublished: true,
+        },
+        {
           clinicProcedures: {
             some: {
               procedure: {
@@ -52,5 +59,14 @@ describe("buildClinicQuery", () => {
         },
       ],
     });
+  });
+
+  it("skips published filter when includeUnverified is enabled", () => {
+    const filters = baseFilters();
+    filters.includeUnverified = true;
+
+    const query = buildClinicQuery(filters);
+
+    expect(query.where).toBeUndefined();
   });
 });

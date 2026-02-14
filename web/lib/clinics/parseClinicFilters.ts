@@ -8,6 +8,7 @@ export type ClinicFilters = {
   hasWhatsapp: boolean;
   hasGoogle: boolean;
   hasYelp: boolean;
+  includeUnverified: boolean;
   sort: ClinicSort;
 };
 
@@ -58,6 +59,7 @@ export function parseClinicFilters(searchParams: SearchParamsInput): ClinicFilte
     hasWhatsapp: parseToggle(getFirstParamValue(searchParams, "hasWhatsapp")),
     hasGoogle: parseToggle(getFirstParamValue(searchParams, "hasGoogle")),
     hasYelp: parseToggle(getFirstParamValue(searchParams, "hasYelp")),
+    includeUnverified: parseToggle(getFirstParamValue(searchParams, "includeUnverified")),
     sort: parseSort(getFirstParamValue(searchParams, "sort")),
   };
 }

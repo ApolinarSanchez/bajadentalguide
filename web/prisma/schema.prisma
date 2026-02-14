@@ -21,6 +21,7 @@ model Clinic {
   websiteUrl    String?
   googleMapsUrl String?
   yelpUrl       String?
+  isPublished   Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   events        Event[]
@@ -31,6 +32,7 @@ model Clinic {
 
   @@index([slug])
   @@index([neighborhoodId])
+  @@index([isPublished])
 }
 
 model Neighborhood {

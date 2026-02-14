@@ -1,6 +1,7 @@
 import { SaveClinicButton } from "@/components/SaveClinicButton";
 import { ClinicReviewForm } from "@/components/ClinicReviewForm";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
+import { Alert } from "@/components/Alert";
 import { db } from "@/lib/db";
 import { computeAverageRating } from "@/lib/reviews/aggregate";
 import { getSessionIdFromCookies } from "@/lib/session";
@@ -31,6 +32,7 @@ export default async function ClinicProfilePage({
       id: true,
       name: true,
       slug: true,
+      isPublished: true,
       neighborhood: {
         select: {
           name: true,
@@ -131,6 +133,12 @@ export default async function ClinicProfilePage({
         </div>
         <p className="pageSubtitle">Clinic profile</p>
         <p className="pageSubtitle">Slug: {clinic.slug}</p>
+        {!clinic.isPublished ? (
+          <Alert variant="info">
+            This listing is unverified and may have limited contact details. Please confirm details
+            directly with the clinic.
+          </Alert>
+        ) : null}
       </section>
 
       <section className="grid2">

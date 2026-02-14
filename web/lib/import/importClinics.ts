@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { computeIsPublished } from "@/lib/clinics/publishLogic";
 import { slugify } from "@/lib/slugify";
 import type { ClinicCsvRow } from "@/lib/import/parseClinicCsv";
 
@@ -51,6 +52,37 @@ function normalizeString(value: unknown): string | undefined {
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
+function normalizeBoolean(value: unknown): boolean | undefined | "invalid" {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized.length === 0) {
+      return undefined;
+    }
+    if (normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on") {
+      return true;
+    }
+    if (
+      normalized === "0" ||
+      normalized === "false" ||
+      normalized === "no" ||
+      normalized === "off"
+    ) {
+      return false;
+    }
+    return "invalid";
+  }
+
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+
+  return "invalid";
+}
+
 function isValidHttpUrl(value: string): boolean {
   try {
     const parsed = new URL(value);
@@ -100,6 +132,13 @@ export function normalizeClinicImportRows(rows: ClinicImportRowInput[]): {
       }
     });
 
+    const normalizedIsPublished = normalizeBoolean(inputRow.isPublished);
+    if (normalizedIsPublished === "invalid") {
+      rowErrors.push("isPublished must be a boolean value.");
+    } else if (normalizedIsPublished !== undefined) {
+      normalizedRow.isPublished = normalizedIsPublished;
+    }
+
     urlFields.forEach((field) => {
       const value = normalizedRow[field];
       if (value && !isValidHttpUrl(value)) {
@@ -127,10 +166,28 @@ export function normalizeClinicImportRows(rows: ClinicImportRowInput[]): {
   };
 }
 
-function toClinicMutationData(row: NormalizedClinicImportRow) {
+function toClinicCreateData(row: NormalizedClinicImportRow) {
   return {
     name: row.name,
     slug: row.slug,
+    isPublished: row.isPublished ?? computeIsPublished(row),
+    ...(row.addressLine1 !== undefined ? { addressLine1: row.addressLine1 } : {}),
+    ...(row.city !== undefined ? { city: row.city } : {}),
+    ...(row.state !== undefined ? { state: row.state } : {}),
+    ...(row.country !== undefined ? { country: row.country } : {}),
+    ...(row.phone !== undefined ? { phone: row.phone } : {}),
+    ...(row.whatsapp !== undefined ? { whatsapp: row.whatsapp } : {}),
+    ...(row.websiteUrl !== undefined ? { websiteUrl: row.websiteUrl } : {}),
+    ...(row.googleMapsUrl !== undefined ? { googleMapsUrl: row.googleMapsUrl } : {}),
+    ...(row.yelpUrl !== undefined ? { yelpUrl: row.yelpUrl } : {}),
+  };
+}
+
+function toClinicUpdateData(row: NormalizedClinicImportRow) {
+  return {
+    name: row.name,
+    slug: row.slug,
+    ...(row.isPublished !== undefined ? { isPublished: row.isPublished } : {}),
     ...(row.addressLine1 !== undefined ? { addressLine1: row.addressLine1 } : {}),
     ...(row.city !== undefined ? { city: row.city } : {}),
     ...(row.state !== undefined ? { state: row.state } : {}),
@@ -183,13 +240,14 @@ export async function importClinics({
   if (!dryRun && normalized.rows.length > 0) {
     await db.$transaction(
       normalized.rows.map((row) => {
-        const data = toClinicMutationData(row);
+        const createData = toClinicCreateData(row);
+        const updateData = toClinicUpdateData(row);
         return db.clinic.upsert({
           where: {
             slug: row.slug,
           },
-          update: data,
-          create: data,
+          update: updateData,
+          create: createData,
         });
       }),
     );

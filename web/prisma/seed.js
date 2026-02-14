@@ -66,6 +66,7 @@ const KNOWN_E2E_IMPLANTS_CLINIC = {
   websiteUrl: "https://www.bdg-e2e-implants-clinic.example",
   googleMapsUrl: "https://maps.google.com/?q=BDG%20E2E%20Implants%20Clinic",
   yelpUrl: "https://www.yelp.com/biz/bdg-e2e-implants-clinic",
+  isPublished: true,
 };
 
 function slugify(value) {
@@ -76,6 +77,18 @@ function slugify(value) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .replace(/-{2,}/g, "-");
+}
+
+function hasDirectContact(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function computeIsPublished(clinic) {
+  return (
+    hasDirectContact(clinic.phone) ||
+    hasDirectContact(clinic.websiteUrl) ||
+    hasDirectContact(clinic.whatsapp)
+  );
 }
 
 function toSeedClinics() {
@@ -129,10 +142,11 @@ function toSeedClinics() {
       websiteUrl: index === 0 ? "/__e2e__/target" : `https://www.${slug}.example`,
       googleMapsUrl: `https://maps.google.com/?q=${encodeURIComponent(name)}`,
       yelpUrl: `https://www.yelp.com/biz/${slug}`,
+      isPublished: true,
     };
   });
 
-  return [...generatedClinics, KNOWN_E2E_IMPLANTS_CLINIC];
+  return [...generatedClinics, { ...KNOWN_E2E_IMPLANTS_CLINIC, isPublished: computeIsPublished(KNOWN_E2E_IMPLANTS_CLINIC) }];
 }
 
 async function main() {

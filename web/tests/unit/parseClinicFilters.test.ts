@@ -9,10 +9,19 @@ describe("parseClinicFilters", () => {
   });
 
   it("parses checkbox params", () => {
-    const filters = parseClinicFilters(new URLSearchParams({ hasWebsite: "1" }));
+    const filters = parseClinicFilters(
+      new URLSearchParams({ hasWebsite: "1", includeUnverified: "1" }),
+    );
 
     expect(filters.hasWebsite).toBe(true);
     expect(filters.hasWhatsapp).toBe(false);
+    expect(filters.includeUnverified).toBe(true);
+  });
+
+  it("defaults includeUnverified to false", () => {
+    const filters = parseClinicFilters(new URLSearchParams());
+
+    expect(filters.includeUnverified).toBe(false);
   });
 
   it("defaults sort to name_asc when missing or invalid", () => {

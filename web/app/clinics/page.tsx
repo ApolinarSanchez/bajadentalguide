@@ -120,6 +120,15 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
                   <input type="checkbox" name="hasYelp" value="1" defaultChecked={filters.hasYelp} />
                   Has Yelp
                 </label>
+                <label className="checkboxLabel">
+                  <input
+                    type="checkbox"
+                    name="includeUnverified"
+                    value="1"
+                    defaultChecked={filters.includeUnverified}
+                  />
+                  Include unverified listings
+                </label>
               </div>
             </div>
 

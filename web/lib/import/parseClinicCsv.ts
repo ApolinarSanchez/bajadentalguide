@@ -12,6 +12,7 @@ export type ClinicCsvRow = {
   websiteUrl?: string;
   googleMapsUrl?: string;
   yelpUrl?: string;
+  isPublished?: boolean;
 };
 
 export type ClinicCsvParseError = {
@@ -36,6 +37,7 @@ const headerToField: Record<string, keyof ClinicCsvRow> = {
   websiteurl: "websiteUrl",
   googlemapsurl: "googleMapsUrl",
   yelpurl: "yelpUrl",
+  ispublished: "isPublished",
 };
 
 function parseCsvCells(text: string): string[][] {
@@ -96,6 +98,25 @@ function toTrimmed(value: string | undefined): string | undefined {
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
+function parseOptionalBoolean(value: string | undefined): boolean | undefined | "invalid" {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  const trimmed = value.trim().toLowerCase();
+  if (trimmed.length === 0) {
+    return undefined;
+  }
+  if (trimmed === "1" || trimmed === "true" || trimmed === "yes" || trimmed === "on") {
+    return true;
+  }
+  if (trimmed === "0" || trimmed === "false" || trimmed === "no" || trimmed === "off") {
+    return false;
+  }
+
+  return "invalid";
+}
+
 export function parseClinicCsv(text: string): ParseClinicCsvResult {
   const csvRows = parseCsvCells(text);
   if (csvRows.length === 0) {
@@ -124,6 +145,7 @@ export function parseClinicCsv(text: string): ParseClinicCsvResult {
     }
 
     const draft: Partial<ClinicCsvRow> = {};
+    const rowErrors: string[] = [];
 
     for (let columnIndex = 0; columnIndex < headerRow.length; columnIndex += 1) {
       const header = headerRow[columnIndex];
@@ -131,13 +153,23 @@ export function parseClinicCsv(text: string): ParseClinicCsvResult {
       if (!field) {
         continue;
       }
+
+      if (field === "isPublished") {
+        const parsed = parseOptionalBoolean(csvRow[columnIndex]);
+        if (parsed === "invalid") {
+          rowErrors.push("isPublished must be true/false or 1/0.");
+        } else if (parsed !== undefined) {
+          draft.isPublished = parsed;
+        }
+        continue;
+      }
+
       const value = toTrimmed(csvRow[columnIndex]);
       if (value !== undefined) {
         draft[field] = value as never;
       }
     }
 
-    const rowErrors: string[] = [];
     const name = toTrimmed(draft.name);
     if (!name) {
       rowErrors.push("Name is required.");

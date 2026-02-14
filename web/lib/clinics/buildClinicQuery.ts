@@ -21,6 +21,12 @@ export function buildClinicQuery(filters: ClinicFilters): {
 } {
   const whereClauses: Prisma.ClinicWhereInput[] = [];
 
+  if (!filters.includeUnverified) {
+    whereClauses.push({
+      isPublished: true,
+    });
+  }
+
   if (filters.q) {
     whereClauses.push({
       name: {

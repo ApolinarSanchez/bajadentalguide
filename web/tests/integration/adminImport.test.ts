@@ -36,6 +36,7 @@ describe("admin clinic import", () => {
 
     expect(clinic).not.toBeNull();
     expect(clinic?.name).toBe("Integration Import Clinic");
+    expect(clinic?.isPublished).toBe(true);
   });
 });
 
