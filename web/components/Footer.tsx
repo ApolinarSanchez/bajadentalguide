@@ -15,6 +15,11 @@ export function Footer() {
         <p className="siteDisclaimer">
           BajaDentalGuide provides information and user reviews. Not medical advice.
         </p>
+        <p className="siteAttribution">
+          Fuente: INEGI, Directorio Estadístico Nacional de Unidades Económicas (DENUE). BDG
+          transforms this source data for directory use, and INEGI does not endorse
+          BajaDentalGuide.
+        </p>
       </div>
     </footer>
   );

@@ -253,6 +253,12 @@ button:disabled {
   font-size: 0.95rem;
 }
 
+.siteAttribution {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .stack {
   display: flex;
   flex-direction: column;

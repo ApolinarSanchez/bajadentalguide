@@ -32,6 +32,16 @@ export default function MethodologyPage() {
         If we change how ratings are calculated or displayed, we will update this page and the
         effective date.
       </p>
+
+      <h2>Data sources</h2>
+      <p>
+        Our clinics directory is sourced from INEGI&apos;s Directorio Estadístico Nacional de
+        Unidades Económicas (DENUE), then normalized for use in BajaDentalGuide.
+      </p>
+      <p>
+        Outbound links may send you to third-party destinations such as Google Maps or Yelp. We do
+        not copy third-party review text or ratings into BDG.
+      </p>
     </section>
   );
 }

@@ -16,5 +16,6 @@ describe("Footer", () => {
       "href",
       "/methodology",
     );
+    expect(screen.getByText(/Fuente: INEGI/i)).toBeInTheDocument();
   });
 });
