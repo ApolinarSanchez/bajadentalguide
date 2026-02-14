@@ -112,8 +112,8 @@ describe("admin analytics queries", () => {
       getEventCounts({ since: since30 }),
       getOutboundClicksByDest({ since: since7 }),
       getOutboundClicksByDest({ since: since30 }),
-      getTopClinicsByOutboundClicks({ since: since7, limit: 10 }),
-      getTopClinicsByShortlistAdds({ since: since7, limit: 10 }),
+      getTopClinicsByOutboundClicks({ since: since7, limit: 1000 }),
+      getTopClinicsByShortlistAdds({ since: since7, limit: 1000 }),
       getReviewCounts({ since: since7 }),
       getReviewCounts({ since: since30 }),
     ]);
