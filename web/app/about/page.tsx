@@ -1,6 +1,6 @@
 export default function AboutPage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>About BajaDentalGuide</h1>
 
       <p>
@@ -62,6 +62,6 @@ export default function AboutPage() {
 
       <h2>Contact</h2>
       <p>Questions, corrections, or concerns? Visit our Contact page.</p>
-    </main>
+    </section>
   );
 }

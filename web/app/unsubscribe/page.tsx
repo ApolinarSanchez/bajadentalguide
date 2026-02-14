@@ -20,9 +20,9 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
   }
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>Unsubscribe</h1>
       <p>{message}</p>
-    </main>
+    </section>
   );
 }

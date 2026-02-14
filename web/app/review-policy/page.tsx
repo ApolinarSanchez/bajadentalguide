@@ -1,6 +1,6 @@
 export default function ReviewPolicyPage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>Review Policy</h1>
       <p>Effective date: February 13, 2026</p>
 
@@ -68,6 +68,6 @@ export default function ReviewPolicyPage() {
       <p>
         and include the clinic page URL and the review text or screenshot.
       </p>
-    </main>
+    </section>
   );
 }

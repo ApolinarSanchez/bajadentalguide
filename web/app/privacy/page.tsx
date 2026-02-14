@@ -1,6 +1,6 @@
 export default function PrivacyPage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>Privacy Policy</h1>
       <p>Effective date: February 13, 2026</p>
 
@@ -86,6 +86,6 @@ export default function PrivacyPage() {
 
       <h2>Contact</h2>
       <p>Privacy questions or requests: support@bajadentalguide.com</p>
-    </main>
+    </section>
   );
 }

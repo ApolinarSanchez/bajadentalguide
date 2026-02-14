@@ -1,6 +1,6 @@
 export default function TermsPage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>Terms of Use</h1>
       <p>Effective date: February 13, 2026</p>
 
@@ -78,6 +78,6 @@ export default function TermsPage() {
 
       <h2>Contact</h2>
       <p>Questions about these Terms: support@bajadentalguide.com</p>
-    </main>
+    </section>
   );
 }

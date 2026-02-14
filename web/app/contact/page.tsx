@@ -1,6 +1,6 @@
 export default function ContactPage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>Contact</h1>
 
       <p>Email: support@bajadentalguide.com</p>
@@ -33,6 +33,6 @@ export default function ContactPage() {
         BajaDentalGuide is not an emergency service. If you or someone else is experiencing an
         emergency, contact local emergency services immediately.
       </p>
-    </main>
+    </section>
   );
 }

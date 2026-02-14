@@ -1,6 +1,6 @@
 export default function MethodologyPage() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+    <section className="prose stack">
       <h1>Rating Methodology</h1>
       <p>Effective date: February 13, 2026</p>
 
@@ -32,6 +32,6 @@ export default function MethodologyPage() {
         If we change how ratings are calculated or displayed, we will update this page and the
         effective date.
       </p>
-    </main>
+    </section>
   );
 }
