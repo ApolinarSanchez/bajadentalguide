@@ -7,20 +7,34 @@ export default async function ProceduresPage() {
   const procedures = await listProcedures();
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Procedures</h1>
+    <section className="stack">
+      <header className="pageHeader stack">
+        <div className="pageTitleRow">
+          <h1>Procedures</h1>
+        </div>
+        <p className="pageSubtitle">
+          Explore common dental procedures and the clinics that offer them.
+        </p>
+      </header>
       {procedures.length === 0 ? (
-        <p>No procedures found.</p>
+        <p className="card">No procedures found.</p>
       ) : (
-        <ul>
+        <ul className="cards">
           {procedures.map((procedure) => (
-            <li key={procedure.id}>
-              <Link href={`/procedures/${procedure.slug}`}>{procedure.name}</Link>{" "}
-              ({procedure._count.clinicProcedures} clinics)
+            <li key={procedure.id} className="card stack">
+              <div className="row">
+                <Link href={`/procedures/${procedure.slug}`}>{procedure.name}</Link>
+                <span className="badge">
+                  {procedure._count.clinicProcedures} clinics
+                </span>
+              </div>
+              {procedure.description ? (
+                <p className="pageSubtitle">{procedure.description}</p>
+              ) : null}
             </li>
           ))}
         </ul>
       )}
-    </main>
+    </section>
   );
 }
