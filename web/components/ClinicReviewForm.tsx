@@ -69,13 +69,17 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
     }
   }
 
+  const isErrorMessage =
+    message === "Too many review submissions. Please try again later." ||
+    message === "Unable to submit review.";
+
   return (
-    <section>
+    <section className="card stack">
       <h2>Leave a BDG review</h2>
-      {disabledReason ? <p>{disabledReason}</p> : null}
+      {disabledReason ? <p className="alert">{disabledReason}</p> : null}
       <form onSubmit={handleSubmit}>
-        <fieldset disabled={Boolean(disabled) || pending || submitted}>
-          <div style={{ marginBottom: "0.5rem" }}>
+        <fieldset className="stack" disabled={Boolean(disabled) || pending || submitted}>
+          <div className="field">
             <label htmlFor="review-rating">Rating</label>
             <select
               id="review-rating"
@@ -89,7 +93,7 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               <option value="5">5</option>
             </select>
           </div>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div className="field">
             <label htmlFor="review-procedure">Procedure (optional)</label>
             <input
               id="review-procedure"
@@ -97,7 +101,7 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               onChange={(event) => setProcedure(event.target.value)}
             />
           </div>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div className="field">
             <label htmlFor="review-visit-month">Visit month (optional)</label>
             <select
               id="review-visit-month"
@@ -112,7 +116,7 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               ))}
             </select>
           </div>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div className="field">
             <label htmlFor="review-visit-year">Visit year (optional)</label>
             <select
               id="review-visit-year"
@@ -127,7 +131,7 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               ))}
             </select>
           </div>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div className="field">
             <label htmlFor="review-headline">Headline (optional)</label>
             <input
               id="review-headline"
@@ -135,7 +139,7 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               onChange={(event) => setHeadline(event.target.value)}
             />
           </div>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div className="field">
             <label htmlFor="review-body">Review</label>
             <textarea
               id="review-body"
@@ -144,13 +148,14 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               onChange={(event) => setBody(event.target.value)}
               required
               minLength={40}
-              style={{ width: "100%" }}
             />
           </div>
-          <button type="submit">{pending ? "Submitting..." : "Submit review"}</button>
+          <button className="btn btnPrimary" type="submit">
+            {pending ? "Submitting..." : "Submit review"}
+          </button>
         </fieldset>
       </form>
-      {message ? <p>{message}</p> : null}
+      {message ? <p className={isErrorMessage ? "alert" : "badge"}>{message}</p> : null}
     </section>
   );
 }

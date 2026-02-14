@@ -118,97 +118,138 @@ export default async function ClinicProfilePage({
       : `BDG Rating: ${aggregate.average} (${aggregate.count} reviews)`;
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>{clinic.name}</h1>
-      <SaveClinicButton clinicId={clinic.id} initialSaved={initialSaved} source="clinic_page" />
-      <p>Clinic profile</p>
-      <p>Slug: {clinic.slug}</p>
-      <p>
-        Location: {clinic.city}, {clinic.state}, {clinic.country}
-      </p>
-      {clinic.neighborhood ? (
-        <p>
-          Neighborhood: {clinic.neighborhood.name} (
-          <Link href={`/neighborhoods/${clinic.neighborhood.slug}`}>view neighborhood</Link>)
-        </p>
-      ) : null}
-      {clinic.clinicProcedures.length > 0 ? (
-        <p>
-          Procedures:{" "}
-          {clinic.clinicProcedures.map((item, index) => (
-            <span key={item.procedure.id}>
-              <Link href={`/procedures/${item.procedure.slug}`}>{item.procedure.name}</Link>
-              {index < clinic.clinicProcedures.length - 1 ? ", " : ""}
-            </span>
-          ))}
-        </p>
-      ) : null}
-      {clinic.addressLine1 ? <p>Address: {clinic.addressLine1}</p> : null}
-      {clinic.phone ? <p>Phone: {clinic.phone}</p> : null}
-      {clinic.whatsapp ? <p>WhatsApp: {clinic.whatsapp}</p> : null}
-      {clinic.websiteUrl || clinic.whatsapp || clinic.googleMapsUrl || clinic.yelpUrl ? (
-        <section>
-          <h2>Links</h2>
-          <p>
-            External links are provided for convenience. You may be redirected to a third‑party
-            website or service.
-          </p>
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            {clinic.websiteUrl ? (
-              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=website`}>
-                Website
-              </TrackedOutboundLink>
-            ) : null}
-            {clinic.whatsapp ? (
-              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=whatsapp`}>
-                WhatsApp
-              </TrackedOutboundLink>
-            ) : null}
-            {clinic.googleMapsUrl ? (
-              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=google`}>
-                Google Listing
-              </TrackedOutboundLink>
-            ) : null}
-            {clinic.yelpUrl ? (
-              <TrackedOutboundLink href={`/out/${clinic.slug}?dest=yelp`}>Yelp</TrackedOutboundLink>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-      <p>{ratingText}</p>
-      <section>
-        <h2>Published BDG reviews</h2>
-        <p>Reviews are user‑submitted and moderated. BajaDentalGuide does not provide medical advice.</p>
-        {publishedReviews.length === 0 ? (
-          <p>No published reviews yet.</p>
-        ) : (
-          <ul style={{ paddingLeft: 0, listStyle: "none" }}>
-            {publishedReviews.map((review) => (
-              <li
-                key={review.id}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "0.5rem",
-                  padding: "0.75rem",
-                  marginBottom: "0.75rem",
-                }}
-              >
-                <p>Rating: {review.ratingOverall}</p>
-                {review.headline ? <p>Headline: {review.headline}</p> : null}
-                {review.procedure || review.visitMonth || review.visitYear ? (
-                  <p>
-                    {review.procedure ? `Procedure: ${review.procedure}` : null}
-                    {review.visitMonth ? `, Visit month: ${review.visitMonth}` : null}
-                    {review.visitYear ? `, Visit year: ${review.visitYear}` : null}
-                  </p>
-                ) : null}
-                <p>{review.body}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+    <section className="stack">
+      <section className="card stack">
+        <div className="pageTitleRow">
+          <h1>{clinic.name}</h1>
+          <SaveClinicButton
+            clinicId={clinic.id}
+            initialSaved={initialSaved}
+            source="clinic_page"
+            className="btn btnPrimary btnSm"
+          />
+        </div>
+        <p className="pageSubtitle">Clinic profile</p>
+        <p className="pageSubtitle">Slug: {clinic.slug}</p>
       </section>
-      <ClinicReviewForm clinicId={clinic.id} disabled={Boolean(existingReview)} disabledReason={reviewNotice ?? ""} />
-    </main>
+
+      <section className="grid2">
+        <div className="stack">
+          <section className="card stack">
+            <h2>Overview</h2>
+            <p>
+              Location: {clinic.city}, {clinic.state}, {clinic.country}
+            </p>
+            {clinic.neighborhood ? (
+              <p>
+                Neighborhood: {clinic.neighborhood.name} (
+                <Link href={`/neighborhoods/${clinic.neighborhood.slug}`}>view neighborhood</Link>)
+              </p>
+            ) : null}
+            {clinic.clinicProcedures.length > 0 ? (
+              <p>
+                Procedures:{" "}
+                {clinic.clinicProcedures.map((item, index) => (
+                  <span key={item.procedure.id}>
+                    <Link href={`/procedures/${item.procedure.slug}`}>{item.procedure.name}</Link>
+                    {index < clinic.clinicProcedures.length - 1 ? ", " : ""}
+                  </span>
+                ))}
+              </p>
+            ) : null}
+            {clinic.addressLine1 ? <p>Address: {clinic.addressLine1}</p> : null}
+            {clinic.phone ? <p>Phone: {clinic.phone}</p> : null}
+            {clinic.whatsapp ? <p>WhatsApp: {clinic.whatsapp}</p> : null}
+          </section>
+
+          {clinic.websiteUrl || clinic.whatsapp || clinic.googleMapsUrl || clinic.yelpUrl ? (
+            <section className="card stack">
+              <h2>Links</h2>
+              <div className="row">
+                {clinic.websiteUrl ? (
+                  <TrackedOutboundLink
+                    href={`/out/${clinic.slug}?dest=website`}
+                    className="btn btnSecondary btnSm"
+                  >
+                    Website
+                  </TrackedOutboundLink>
+                ) : null}
+                {clinic.whatsapp ? (
+                  <TrackedOutboundLink
+                    href={`/out/${clinic.slug}?dest=whatsapp`}
+                    className="btn btnSecondary btnSm"
+                  >
+                    WhatsApp
+                  </TrackedOutboundLink>
+                ) : null}
+                {clinic.googleMapsUrl ? (
+                  <TrackedOutboundLink
+                    href={`/out/${clinic.slug}?dest=google`}
+                    className="btn btnSecondary btnSm"
+                  >
+                    Google Listing
+                  </TrackedOutboundLink>
+                ) : null}
+                {clinic.yelpUrl ? (
+                  <TrackedOutboundLink
+                    href={`/out/${clinic.slug}?dest=yelp`}
+                    className="btn btnSecondary btnSm"
+                  >
+                    Yelp
+                  </TrackedOutboundLink>
+                ) : null}
+              </div>
+              <p className="alert">
+                External links are provided for convenience. You may be redirected to a third‑party
+                website or service.
+              </p>
+            </section>
+          ) : null}
+        </div>
+
+        <div className="stack">
+          <section className="card stack">
+            <h2>BDG rating &amp; reviews</h2>
+            <div className="row">
+              <p>{ratingText}</p>
+              {aggregate.count > 0 ? (
+                <span className="badge">
+                  {aggregate.average} average from {aggregate.count} reviews
+                </span>
+              ) : null}
+            </div>
+            <h3>Published BDG reviews</h3>
+            <p>
+              Reviews are user‑submitted and moderated. BajaDentalGuide does not provide medical
+              advice.
+            </p>
+            {publishedReviews.length === 0 ? (
+              <p>No published reviews yet.</p>
+            ) : (
+              <ul className="cards">
+                {publishedReviews.map((review) => (
+                  <li key={review.id} className="card stack">
+                    <div className="row">
+                      <span className="badge">Rating: {review.ratingOverall}</span>
+                      {review.procedure ? <span className="badge">Procedure: {review.procedure}</span> : null}
+                      {review.visitMonth ? <span className="badge">Visit month: {review.visitMonth}</span> : null}
+                      {review.visitYear ? <span className="badge">Visit year: {review.visitYear}</span> : null}
+                    </div>
+                    {review.headline ? <p>Headline: {review.headline}</p> : null}
+                    <p>{review.body}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <ClinicReviewForm
+            clinicId={clinic.id}
+            disabled={Boolean(existingReview)}
+            disabledReason={reviewNotice ?? ""}
+          />
+        </div>
+      </section>
+    </section>
   );
 }
