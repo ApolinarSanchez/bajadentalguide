@@ -13,6 +13,7 @@
     "test:integration": "vitest run tests/integration",
     "test:e2e": "cross-env RATE_LIMIT_REVIEW_LIMIT=2 RATE_LIMIT_REVIEW_WINDOW_SEC=3600 RATE_LIMIT_EMAIL_LIMIT=2 RATE_LIMIT_EMAIL_WINDOW_SEC=3600 playwright test",
     "jobs:followups": "node --experimental-strip-types scripts/sendFollowups.ts",
+    "denue:export:tijuana": "node --experimental-strip-types scripts/denue/exportDenueClinics.ts",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:migrate": "prisma migrate dev",
