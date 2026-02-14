@@ -52,39 +52,45 @@ export function SessionEmailCaptureForm({ currentEmail, currentOptIn }: SessionE
   }
 
   return (
-    <section style={{ border: "1px solid #ddd", borderRadius: "0.5rem", padding: "0.75rem" }}>
+    <section className="card stack">
       <h2>Get reminders and follow-ups</h2>
       <p>We’ll email you in about a week to ask how it went and invite a review.</p>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <label htmlFor="shortlist-email">Email</label>
-          <input
-            id="shortlist-email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: "0.5rem" }}>
-          <label>
+        <fieldset className="stack" disabled={pending}>
+          <div className="field">
+            <label htmlFor="shortlist-email">Email</label>
             <input
-              type="checkbox"
-              checked={optIn}
-              onChange={(event) => setOptIn(event.target.checked)}
-            />{" "}
-            Email me reminders
-          </label>
-        </div>
-        <button type="submit" disabled={pending}>
-          {pending ? "Saving..." : "Save reminders"}
-        </button>
+              id="shortlist-email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
+          <div className="fieldRow">
+            <label className="checkboxLabel">
+              <input
+                type="checkbox"
+                checked={optIn}
+                onChange={(event) => setOptIn(event.target.checked)}
+              />
+              Email me reminders
+            </label>
+          </div>
+          <button className="btn btnPrimary" type="submit">
+            {pending ? "Saving..." : "Save reminders"}
+          </button>
+        </fieldset>
       </form>
       {currentOptIn ? <p>You&apos;re subscribed.</p> : null}
       {currentOptIn ? (
         <p>Unsubscribe link will be included in emails.</p>
       ) : null}
-      {message ? <p>{message}</p> : null}
+      {message ? (
+        <p className="alert" aria-live="polite">
+          {message}
+        </p>
+      ) : null}
     </section>
   );
 }

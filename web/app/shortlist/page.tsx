@@ -25,65 +25,89 @@ export default async function ShortlistPage() {
     : null;
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Shortlist</h1>
+    <section className="stack">
+      <header className="pageHeader stack">
+        <div className="pageTitleRow">
+          <h1>Shortlist</h1>
+        </div>
+        <p className="pageSubtitle">
+          Keep track of clinics you want to revisit and manage your reminder preferences.
+        </p>
+      </header>
+
       <SessionEmailCaptureForm
         currentEmail={profile?.email}
         currentOptIn={Boolean(profile?.emailOptIn)}
       />
-      {savedClinics.length === 0 ? (
-        <>
-          <p>No saved clinics yet</p>
-          <p>
-            <Link href="/clinics">Browse clinics</Link>
-          </p>
-        </>
-      ) : (
-        <ul style={{ paddingLeft: 0, listStyle: "none" }}>
-          {savedClinics.map((clinic) => (
-            <li
-              key={clinic.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "0.5rem",
-                padding: "0.75rem",
-                marginBottom: "0.75rem",
-              }}
-            >
-              <p style={{ marginTop: 0 }}>
-                <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
-              </p>
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                <SaveClinicButton
-                  clinicId={clinic.id}
-                  initialSaved
-                  source="clinic_page"
-                  showRemoveLabel
-                  refreshOnChange
-                />
-                {clinic.websiteUrl ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=website`}>
-                    Website
-                  </TrackedOutboundLink>
-                ) : null}
-                {clinic.whatsapp ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=whatsapp`}>
-                    WhatsApp
-                  </TrackedOutboundLink>
-                ) : null}
-                {clinic.googleMapsUrl ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=google`}>
-                    Google Listing
-                  </TrackedOutboundLink>
-                ) : null}
-                {clinic.yelpUrl ? (
-                  <TrackedOutboundLink href={`/out/${clinic.slug}?dest=yelp`}>Yelp</TrackedOutboundLink>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+
+      <section className="stack">
+        <h2>Saved clinics</h2>
+        {savedClinics.length === 0 ? (
+          <section className="card stack">
+            <p>
+              <strong>No saved clinics yet</strong>
+            </p>
+            <p>Add clinics from the directory to compare your top options in one place.</p>
+            <p>
+              <Link href="/clinics" className="btn btnPrimary">
+                Browse clinics
+              </Link>
+            </p>
+          </section>
+        ) : (
+          <ul className="cards">
+            {savedClinics.map((clinic) => (
+              <li key={clinic.id} className="card stack">
+                <p className="clinicsCardTitle">
+                  <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
+                </p>
+                <div className="clinicsActions">
+                  <SaveClinicButton
+                    clinicId={clinic.id}
+                    initialSaved
+                    source="clinic_page"
+                    showRemoveLabel
+                    refreshOnChange
+                    className="btn btnDanger btnSm"
+                  />
+                  {clinic.websiteUrl ? (
+                    <TrackedOutboundLink
+                      href={`/out/${clinic.slug}?dest=website`}
+                      className="btn btnSecondary btnSm"
+                    >
+                      Website
+                    </TrackedOutboundLink>
+                  ) : null}
+                  {clinic.whatsapp ? (
+                    <TrackedOutboundLink
+                      href={`/out/${clinic.slug}?dest=whatsapp`}
+                      className="btn btnSecondary btnSm"
+                    >
+                      WhatsApp
+                    </TrackedOutboundLink>
+                  ) : null}
+                  {clinic.googleMapsUrl ? (
+                    <TrackedOutboundLink
+                      href={`/out/${clinic.slug}?dest=google`}
+                      className="btn btnSecondary btnSm"
+                    >
+                      Google Listing
+                    </TrackedOutboundLink>
+                  ) : null}
+                  {clinic.yelpUrl ? (
+                    <TrackedOutboundLink
+                      href={`/out/${clinic.slug}?dest=yelp`}
+                      className="btn btnSecondary btnSm"
+                    >
+                      Yelp
+                    </TrackedOutboundLink>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </section>
   );
 }
