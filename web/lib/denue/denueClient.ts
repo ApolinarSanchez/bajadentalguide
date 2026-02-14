@@ -132,6 +132,9 @@ export async function fetchAllBuscarAreaAct(params: FetchAllBuscarAreaActParams)
     }
 
     records.push(...page);
+    if (page.length < pageSize) {
+      break;
+    }
     regIni += pageSize;
 
     if (delayMs > 0) {

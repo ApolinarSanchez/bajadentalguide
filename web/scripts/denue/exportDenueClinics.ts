@@ -1,8 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { clinicRowsToCsv } from "../../lib/denue/csv";
-import { fetchAllBuscarAreaAct } from "../../lib/denue/denueClient";
-import { denueRecordsToClinicRows } from "../../lib/denue/normalize";
+import { clinicRowsToCsv } from "../../lib/denue/csv.ts";
+import { fetchAllBuscarAreaAct } from "../../lib/denue/denueClient.ts";
+import { denueRecordsToClinicRows } from "../../lib/denue/normalize.ts";
 
 type DenueRecord = Record<string, unknown>;
 

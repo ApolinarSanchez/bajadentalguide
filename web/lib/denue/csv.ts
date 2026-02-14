@@ -1,4 +1,4 @@
-import type { DenueClinicRow } from "./normalize";
+import type { DenueClinicRow } from "./normalize.ts";
 
 const CSV_HEADERS = [
   "name",

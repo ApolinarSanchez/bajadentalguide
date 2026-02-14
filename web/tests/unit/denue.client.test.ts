@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { fetchAllBuscarAreaAct } from "@/lib/denue/denueClient";
 
 describe("fetchAllBuscarAreaAct", () => {
-  it("fetches paginated DENUE pages until an empty array", async () => {
+  it("fetches paginated DENUE pages and stops on a partial last page", async () => {
     const payloads = [[{ Id: 1 }, { Id: 2 }], [{ Id: 3 }], []] as const;
     let callIndex = 0;
 
@@ -27,8 +27,7 @@ describe("fetchAllBuscarAreaAct", () => {
       sleepFn: async () => Promise.resolve(),
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(rows).toHaveLength(3);
-
   });
 });
