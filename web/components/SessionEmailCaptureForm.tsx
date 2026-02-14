@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert } from "@/components/Alert";
 import { FormEvent, useState } from "react";
 
 type SessionEmailCaptureFormProps = {
@@ -12,6 +13,9 @@ export function SessionEmailCaptureForm({ currentEmail, currentOptIn }: SessionE
   const [optIn, setOptIn] = useState(currentOptIn ?? true);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const isErrorMessage =
+    message === "Too many requests. Please try again later." ||
+    message === "Failed to save email.";
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -55,7 +59,7 @@ export function SessionEmailCaptureForm({ currentEmail, currentOptIn }: SessionE
     <section className="card stack">
       <h2>Get reminders and follow-ups</h2>
       <p>We’ll email you in about a week to ask how it went and invite a review.</p>
-      <form onSubmit={handleSubmit}>
+      <form className="stack" onSubmit={handleSubmit}>
         <fieldset className="stack" disabled={pending}>
           <div className="field">
             <label htmlFor="shortlist-email">Email</label>
@@ -77,6 +81,9 @@ export function SessionEmailCaptureForm({ currentEmail, currentOptIn }: SessionE
               Email me reminders
             </label>
           </div>
+          {message ? (
+            <Alert variant={isErrorMessage ? "error" : "success"}>{message}</Alert>
+          ) : null}
           <button className="btn btnPrimary" type="submit">
             {pending ? "Saving..." : "Save reminders"}
           </button>
@@ -85,11 +92,6 @@ export function SessionEmailCaptureForm({ currentEmail, currentOptIn }: SessionE
       {currentOptIn ? <p>You&apos;re subscribed.</p> : null}
       {currentOptIn ? (
         <p>Unsubscribe link will be included in emails.</p>
-      ) : null}
-      {message ? (
-        <p className="alert" aria-live="polite">
-          {message}
-        </p>
       ) : null}
     </section>
   );

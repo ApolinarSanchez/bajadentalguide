@@ -509,6 +509,18 @@ button:disabled {
   color: #153e75;
 }
 
+.alertError {
+  border-color: #f2c0c0;
+  background: #fdf2f2;
+  color: #7a1616;
+}
+
+.alertSuccess {
+  border-color: #bfe3bf;
+  background: #edf9ed;
+  color: #1f5a1f;
+}
+
 .prose {
   max-width: 760px;
 }

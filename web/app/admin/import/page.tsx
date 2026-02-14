@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert } from "@/components/Alert";
 import type { ClinicImportRowInput, ImportClinicsResult } from "@/lib/import/importClinics";
 import { parseClinicCsv } from "@/lib/import/parseClinicCsv";
 import Link from "next/link";
@@ -111,16 +112,18 @@ export default function AdminImportPage() {
       </section>
 
       {parseErrors.length > 0 ? (
-        <section aria-label="CSV validation errors" className="alert stack">
-          <h2>Validation errors</h2>
-          <ul>
-            {parseErrors.map((error, index) => (
-              <li key={`${error.rowIndex}-${index}`}>
-                Row {error.rowIndex}: {error.message}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <Alert variant="error">
+          <div aria-label="CSV validation errors" className="stack">
+            <h2>Validation errors</h2>
+            <ul>
+              {parseErrors.map((error, index) => (
+                <li key={`${error.rowIndex}-${index}`}>
+                  Row {error.rowIndex}: {error.message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Alert>
       ) : null}
 
       {rows.length > 0 ? (
@@ -151,6 +154,20 @@ export default function AdminImportPage() {
         </section>
       ) : null}
 
+      {importState.message ? (
+        <Alert
+          variant={
+            importState.status === "error"
+              ? "error"
+              : importState.message === "Import complete."
+                ? "success"
+                : "info"
+          }
+        >
+          {importState.message}
+        </Alert>
+      ) : null}
+
       <div className="fieldRow">
         <button
           className="btn btnSecondary"
@@ -169,10 +186,6 @@ export default function AdminImportPage() {
           Import clinics
         </button>
       </div>
-
-      {importState.message ? (
-        <p className="alert">{importState.message}</p>
-      ) : null}
       {importState.result ? (
         <section aria-label="Import result" className="card stack">
           <h2>Import result</h2>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert } from "@/components/Alert";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -69,6 +70,7 @@ export function ReviewModerationActions({ reviewId }: ReviewModerationActionsPro
 
   return (
     <div className="stack">
+      {message ? <Alert variant="error">{message}</Alert> : null}
       <div className="row">
         <button
           type="button"
@@ -95,7 +97,6 @@ export function ReviewModerationActions({ reviewId }: ReviewModerationActionsPro
           {pending ? "Rejecting..." : "Reject"}
         </button>
       </div>
-      {message ? <p className="alert">{message}</p> : null}
     </div>
   );
 }

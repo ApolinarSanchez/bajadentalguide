@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert } from "@/components/Alert";
 import { useMemo, useState, type FormEvent } from "react";
 
 type ClinicReviewFormProps = {
@@ -76,8 +77,8 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
   return (
     <section className="card stack">
       <h2>Leave a BDG review</h2>
-      {disabledReason ? <p className="alert">{disabledReason}</p> : null}
-      <form onSubmit={handleSubmit}>
+      {disabledReason ? <Alert>{disabledReason}</Alert> : null}
+      <form className="stack" onSubmit={handleSubmit}>
         <fieldset className="stack" disabled={Boolean(disabled) || pending || submitted}>
           <div className="field">
             <label htmlFor="review-rating">Rating</label>
@@ -150,12 +151,14 @@ export function ClinicReviewForm({ clinicId, disabled, disabledReason }: ClinicR
               minLength={40}
             />
           </div>
+          {message ? (
+            <Alert variant={isErrorMessage ? "error" : "success"}>{message}</Alert>
+          ) : null}
           <button className="btn btnPrimary" type="submit">
             {pending ? "Submitting..." : "Submit review"}
           </button>
         </fieldset>
       </form>
-      {message ? <p className={isErrorMessage ? "alert" : "badge"}>{message}</p> : null}
     </section>
   );
 }
