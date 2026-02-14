@@ -14,6 +14,7 @@ export default async function AdminPage() {
       slug: true,
       websiteUrl: true,
       whatsapp: true,
+      updatedAt: true,
     },
   });
 
@@ -23,12 +24,23 @@ export default async function AdminPage() {
         <div className="pageTitleRow">
           <h1>Admin Clinics</h1>
         </div>
-        <p className="pageSubtitle">Manage clinics and navigate admin tools.</p>
+        <p className="pageSubtitle">
+          Manage clinic listings and jump to import, analytics, moderation, and
+          session tools.
+        </p>
         <nav aria-label="Admin sections" className="row">
-          <Link href="/admin/import">Import clinics CSV</Link>
-          <Link href="/admin/reviews">Moderate reviews</Link>
-          <Link href="/admin/analytics">Analytics dashboard</Link>
-          <Link href="/admin/sessions">Session email profiles</Link>
+          <Link href="/admin/import" className="btn btnPrimary">
+            Import clinics CSV
+          </Link>
+          <Link href="/admin/analytics" className="btn btnSecondary">
+            Analytics dashboard
+          </Link>
+          <Link href="/admin/reviews" className="btn btnGhost">
+            Moderate reviews
+          </Link>
+          <Link href="/admin/sessions" className="btn btnGhost">
+            Session email profiles
+          </Link>
         </nav>
       </header>
       <div className="tableWrap">
@@ -39,12 +51,15 @@ export default async function AdminPage() {
               <th>Slug</th>
               <th>Website</th>
               <th>WhatsApp</th>
+              <th>Updated</th>
             </tr>
           </thead>
           <tbody>
             {clinics.map((clinic) => (
               <tr key={clinic.id}>
-                <td>{clinic.name}</td>
+                <td>
+                  <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
+                </td>
                 <td>{clinic.slug}</td>
                 <td>
                   {clinic.websiteUrl ? (
@@ -56,6 +71,7 @@ export default async function AdminPage() {
                   )}
                 </td>
                 <td>{clinic.whatsapp ?? "-"}</td>
+                <td>{new Date(clinic.updatedAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

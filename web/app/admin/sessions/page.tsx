@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -22,56 +23,61 @@ export default async function AdminSessionsPage() {
   });
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Session email profiles</h1>
+    <section className="stack">
+      <header className="pageHeader stack">
+        <div className="pageTitleRow">
+          <h1>Session email profiles</h1>
+          <Link href="/admin" className="btn btnSecondary btnSm">
+            Back to admin
+          </Link>
+        </div>
+        <p className="pageSubtitle">
+          Review saved session emails, opt-in status, and delivery log counts.
+        </p>
+      </header>
+
       {sessions.length === 0 ? (
-        <p>No session profiles yet.</p>
+        <p className="card">No session profiles yet.</p>
       ) : (
-        <table style={{ borderCollapse: "collapse", width: "100%" }}>
-          <thead>
-            <tr>
-              <th style={{ borderBottom: "1px solid #ddd", padding: "0.5rem", textAlign: "left" }}>
-                Session
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", padding: "0.5rem", textAlign: "left" }}>Email</th>
-              <th style={{ borderBottom: "1px solid #ddd", padding: "0.5rem", textAlign: "left" }}>
-                Opt in
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", padding: "0.5rem", textAlign: "left" }}>
-                Captured at
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", padding: "0.5rem", textAlign: "left" }}>
-                Unsubscribed at
-              </th>
-              <th style={{ borderBottom: "1px solid #ddd", padding: "0.5rem", textAlign: "left" }}>
-                Email logs
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sessions.map((session) => (
-              <tr key={session.sessionId}>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{session.sessionId}</td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                  {session.email ?? "-"}
-                </td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                  {session.emailOptIn ? "true" : "false"}
-                </td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                  {session.emailCapturedAt ? new Date(session.emailCapturedAt).toISOString() : "-"}
-                </td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                  {session.unsubscribedAt ? new Date(session.unsubscribedAt).toISOString() : "-"}
-                </td>
-                <td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>
-                  {session._count.emailLogs}
-                </td>
+        <div className="tableWrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Session</th>
+                <th>Email</th>
+                <th>Opt in</th>
+                <th>Captured at</th>
+                <th>Unsubscribed at</th>
+                <th>Email logs</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sessions.map((session) => (
+                <tr key={session.sessionId}>
+                  <td>{session.sessionId}</td>
+                  <td>{session.email ?? "-"}</td>
+                  <td>
+                    <span className="badge">
+                      {session.emailOptIn ? "true" : "false"}
+                    </span>
+                  </td>
+                  <td>
+                    {session.emailCapturedAt
+                      ? new Date(session.emailCapturedAt).toISOString()
+                      : "-"}
+                  </td>
+                  <td>
+                    {session.unsubscribedAt
+                      ? new Date(session.unsubscribedAt).toISOString()
+                      : "-"}
+                  </td>
+                  <td>{session._count.emailLogs}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
-    </main>
+    </section>
   );
 }

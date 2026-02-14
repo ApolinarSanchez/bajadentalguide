@@ -70,6 +70,28 @@ export default async function AdminAnalyticsPage() {
   ];
 
   const outboundRows = ["website", "whatsapp", "google", "yelp"] as const;
+  const summaryCards = [
+    {
+      label: "Outbound clicks",
+      sevenDayValue: countForEvent(eventCounts7, "outbound_click"),
+      thirtyDayValue: countForEvent(eventCounts30, "outbound_click"),
+    },
+    {
+      label: "Shortlist adds",
+      sevenDayValue: countForEvent(eventCounts7, "shortlist_add"),
+      thirtyDayValue: countForEvent(eventCounts30, "shortlist_add"),
+    },
+    {
+      label: "Reviews submitted",
+      sevenDayValue: reviewCounts7.createdSince,
+      thirtyDayValue: reviewCounts30.createdSince,
+    },
+    {
+      label: "Email captures",
+      sevenDayValue: countForEvent(eventCounts7, "email_capture"),
+      thirtyDayValue: countForEvent(eventCounts30, "email_capture"),
+    },
+  ];
 
   return (
     <section className="stack">
@@ -85,6 +107,18 @@ export default async function AdminAnalyticsPage() {
           review activity.
         </p>
       </header>
+
+      <section className="grid2" aria-label="Analytics highlights">
+        {summaryCards.map((metric) => (
+          <article key={metric.label} className="card stack">
+            <h2>{metric.label}</h2>
+            <div className="row">
+              <span className="badge">7d: {metric.sevenDayValue}</span>
+              <span className="badge">30d: {metric.thirtyDayValue}</span>
+            </div>
+          </article>
+        ))}
+      </section>
 
       <div className="grid">
         <section className="card stack">
@@ -196,9 +230,13 @@ export default async function AdminAnalyticsPage() {
 
       <section className="card stack">
         <h2>Pending reviews</h2>
-        <p>Pending reviews: {reviewCounts30.pendingOverall}</p>
         <p>
-          <Link href="/admin/reviews">Go to moderation queue</Link>
+          Pending reviews: <span className="badge">{reviewCounts30.pendingOverall}</span>
+        </p>
+        <p>
+          <Link href="/admin/reviews" className="btn btnSecondary btnSm">
+            Go to moderation queue
+          </Link>
         </p>
       </section>
     </section>

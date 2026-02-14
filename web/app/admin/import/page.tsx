@@ -85,13 +85,14 @@ export default function AdminImportPage() {
     <section className="stack">
       <header className="pageHeader stack">
         <div className="pageTitleRow">
-          <h1>Import Clinics CSV</h1>
+          <h1>Import clinics CSV</h1>
           <Link href="/admin" className="btn btnSecondary btnSm">
             Back to admin list
           </Link>
         </div>
         <p className="pageSubtitle">
-          Upload a CSV, preview parsed rows, then validate or import clinics.
+          Upload a CSV with clinic name, slug, and contact fields, preview the
+          parsed rows, then validate or import.
         </p>
       </header>
 
@@ -110,7 +111,7 @@ export default function AdminImportPage() {
       </section>
 
       {parseErrors.length > 0 ? (
-        <section aria-label="CSV validation errors" className="card stack">
+        <section aria-label="CSV validation errors" className="alert stack">
           <h2>Validation errors</h2>
           <ul>
             {parseErrors.map((error, index) => (
@@ -170,7 +171,7 @@ export default function AdminImportPage() {
       </div>
 
       {importState.message ? (
-        <p className={importState.status === "error" ? "alert" : undefined}>{importState.message}</p>
+        <p className="alert">{importState.message}</p>
       ) : null}
       {importState.result ? (
         <section aria-label="Import result" className="card stack">

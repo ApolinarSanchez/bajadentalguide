@@ -31,9 +31,12 @@ function ReviewSection({
 }) {
   return (
     <section className="stack">
-      <h2>{heading}</h2>
+      <div className="row">
+        <h2>{heading}</h2>
+        <span className="badge">{reviews.length}</span>
+      </div>
       {reviews.length === 0 ? (
-        <p>No reviews.</p>
+        <p className="card">No reviews.</p>
       ) : (
         <ul className="cards">
           {reviews.map((review) => (
@@ -42,12 +45,18 @@ function ReviewSection({
               data-testid={`review-row-${review.id}`}
               className="card stack"
             >
-              <p>
+              <div className="row">
                 <Link href={`/clinics/${review.clinic.slug}`}>{review.clinic.name}</Link>
-              </p>
-              <p>Rating: {review.ratingOverall}</p>
-              {review.procedure ? <p>Procedure: {review.procedure}</p> : null}
-              <p>Created: {new Date(review.createdAt).toLocaleString()}</p>
+                <span className="badge">Rating: {review.ratingOverall}</span>
+                <span className="badge">
+                  Created: {new Date(review.createdAt).toLocaleString()}
+                </span>
+              </div>
+              {review.procedure ? (
+                <p>
+                  <strong>Procedure:</strong> {review.procedure}
+                </p>
+              ) : null}
               <p>{bodySnippet(review.body)}</p>
               {actions ? <div className="row">{actions(review.id)}</div> : null}
             </li>
@@ -123,7 +132,7 @@ export default async function AdminReviewsPage() {
           </Link>
         </div>
         <p className="pageSubtitle">
-          Approve, publish, or reject user-submitted reviews from the moderation queue.
+          Approve or reject user-submitted reviews from the moderation queue.
         </p>
       </header>
       <ReviewSection

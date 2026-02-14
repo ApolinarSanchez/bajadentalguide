@@ -68,24 +68,34 @@ export function ReviewModerationActions({ reviewId }: ReviewModerationActionsPro
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-      <div>
-        <button type="button" onClick={handleApprove} disabled={pending}>
+    <div className="stack">
+      <div className="row">
+        <button
+          type="button"
+          className="btn btnPrimary btnSm"
+          onClick={handleApprove}
+          disabled={pending}
+        >
           {pending ? "Approving..." : "Approve"}
         </button>
       </div>
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+      <div className="fieldRow">
         <input
           type="text"
           value={rejectionReason}
           onChange={(event) => setRejectionReason(event.target.value)}
           placeholder="Rejection reason (optional)"
         />
-        <button type="button" onClick={handleReject} disabled={pending}>
+        <button
+          type="button"
+          className="btn btnDanger btnSm"
+          onClick={handleReject}
+          disabled={pending}
+        >
           {pending ? "Rejecting..." : "Reject"}
         </button>
       </div>
-      {message ? <p>{message}</p> : null}
+      {message ? <p className="alert">{message}</p> : null}
     </div>
   );
 }
