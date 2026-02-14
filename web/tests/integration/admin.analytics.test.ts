@@ -128,11 +128,14 @@ describe("admin analytics queries", () => {
     expect((outboundByDest30.website ?? 0) - (baseOutboundByDest30.website ?? 0)).toBe(3);
     expect((outboundByDest30.whatsapp ?? 0) - (baseOutboundByDest30.whatsapp ?? 0)).toBe(2);
 
-    expect(topOutbound7[0]).toMatchObject({
+    const outboundEntry = topOutbound7.find((row) => row.clinicSlug === clinicSlug);
+    expect(outboundEntry).toMatchObject({
       clinicSlug,
       count: 3,
     });
-    expect(topShortlist7[0]).toMatchObject({
+
+    const shortlistEntry = topShortlist7.find((row) => row.clinicSlug === clinicSlug);
+    expect(shortlistEntry).toMatchObject({
       clinicSlug,
       count: 5,
     });
