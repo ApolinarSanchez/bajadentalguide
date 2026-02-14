@@ -3,6 +3,7 @@ import { SaveClinicButton } from "@/components/SaveClinicButton";
 import { TrackedOutboundLink } from "@/components/TrackedOutboundLink";
 import { db } from "@/lib/db";
 import { buildClinicQuery } from "@/lib/clinics/buildClinicQuery";
+import { sortFeaturedClinics } from "@/lib/clinics/featuredSort";
 import { parseClinicFilters } from "@/lib/clinics/parseClinicFilters";
 import { getSessionIdFromCookies } from "@/lib/session";
 import { buildSavedSet } from "@/lib/shortlist";
@@ -41,19 +42,47 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
   ]);
   const query = buildClinicQuery(filters);
 
-  const clinics = await db.clinic.findMany({
-    where: query.where,
-    orderBy: query.orderBy,
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      websiteUrl: true,
-      whatsapp: true,
-      googleMapsUrl: true,
-      yelpUrl: true,
-    },
-  });
+  const featuredWhere = query.where
+    ? {
+        AND: [query.where, { isFeatured: true }],
+      }
+    : { isFeatured: true };
+  const clinicsWhere = query.where
+    ? {
+        AND: [query.where, { isFeatured: false }],
+      }
+    : { isFeatured: false };
+
+  const [featuredClinicsRaw, clinics] = await Promise.all([
+    db.clinic.findMany({
+      where: featuredWhere,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        featuredRank: true,
+        websiteUrl: true,
+        whatsapp: true,
+        googleMapsUrl: true,
+        yelpUrl: true,
+      },
+    }),
+    db.clinic.findMany({
+      where: clinicsWhere,
+      orderBy: query.orderBy,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        websiteUrl: true,
+        whatsapp: true,
+        googleMapsUrl: true,
+        yelpUrl: true,
+      },
+    }),
+  ]);
+
+  const featuredClinics = sortFeaturedClinics(featuredClinicsRaw);
 
   const savedRows = sessionId
     ? await db.savedClinic.findMany({
@@ -182,6 +211,65 @@ export default async function ClinicsPage({ searchParams }: ClinicsPageProps) {
         </aside>
 
         <section className="stack">
+          {featuredClinics.length > 0 ? (
+            <section className="stack" aria-label="Featured clinics">
+              <h2>Featured</h2>
+              <p className="pageSubtitle">Featured clinics</p>
+              <ul className="cards">
+                {featuredClinics.map((clinic) => (
+                  <li key={clinic.id} className="card stack">
+                    <div className="row">
+                      <p className="clinicsCardTitle">
+                        <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
+                      </p>
+                      <span className="badge">Featured</span>
+                    </div>
+                    <div className="clinicsActions">
+                      <SaveClinicButton
+                        clinicId={clinic.id}
+                        initialSaved={savedClinicIds.has(clinic.id)}
+                        source="clinics_list"
+                        className="btn btnSecondary btnSm"
+                      />
+                      {clinic.websiteUrl ? (
+                        <TrackedOutboundLink
+                          href={`/out/${clinic.slug}?dest=website`}
+                          className="btn btnSecondary btnSm"
+                        >
+                          Website
+                        </TrackedOutboundLink>
+                      ) : null}
+                      {clinic.whatsapp ? (
+                        <TrackedOutboundLink
+                          href={`/out/${clinic.slug}?dest=whatsapp`}
+                          className="btn btnSecondary btnSm"
+                        >
+                          WhatsApp
+                        </TrackedOutboundLink>
+                      ) : null}
+                      {clinic.googleMapsUrl ? (
+                        <TrackedOutboundLink
+                          href={`/out/${clinic.slug}?dest=google`}
+                          className="btn btnSecondary btnSm"
+                        >
+                          Google Listing
+                        </TrackedOutboundLink>
+                      ) : null}
+                      {clinic.yelpUrl ? (
+                        <TrackedOutboundLink
+                          href={`/out/${clinic.slug}?dest=yelp`}
+                          className="btn btnSecondary btnSm"
+                        >
+                          Yelp
+                        </TrackedOutboundLink>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           <div className="row">
             <span data-testid="results-count" className="badge">
               Results: {clinics.length}

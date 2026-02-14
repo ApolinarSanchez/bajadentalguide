@@ -67,6 +67,8 @@ const KNOWN_E2E_IMPLANTS_CLINIC = {
   googleMapsUrl: "https://maps.google.com/?q=BDG%20E2E%20Implants%20Clinic",
   yelpUrl: "https://www.yelp.com/biz/bdg-e2e-implants-clinic",
   isPublished: true,
+  isFeatured: true,
+  featuredRank: 1,
 };
 
 function slugify(value) {
@@ -143,10 +145,18 @@ function toSeedClinics() {
       googleMapsUrl: `https://maps.google.com/?q=${encodeURIComponent(name)}`,
       yelpUrl: `https://www.yelp.com/biz/${slug}`,
       isPublished: true,
+      isFeatured: false,
+      featuredRank: null,
     };
   });
 
-  return [...generatedClinics, { ...KNOWN_E2E_IMPLANTS_CLINIC, isPublished: computeIsPublished(KNOWN_E2E_IMPLANTS_CLINIC) }];
+  return [
+    ...generatedClinics,
+    {
+      ...KNOWN_E2E_IMPLANTS_CLINIC,
+      isPublished: computeIsPublished(KNOWN_E2E_IMPLANTS_CLINIC),
+    },
+  ];
 }
 
 async function main() {

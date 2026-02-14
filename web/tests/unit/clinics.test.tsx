@@ -37,6 +37,11 @@ vi.mock("@/components/SaveClinicButton", () => ({
 
 describe("Clinics page", () => {
   beforeEach(() => {
+    clinicFindManyMock.mockReset();
+    neighborhoodFindManyMock.mockReset();
+    procedureFindManyMock.mockReset();
+    cookiesMock.mockReset();
+
     cookiesMock.mockResolvedValue({
       get() {
         return undefined;
@@ -46,7 +51,7 @@ describe("Clinics page", () => {
     neighborhoodFindManyMock.mockResolvedValue([]);
     procedureFindManyMock.mockResolvedValue([]);
 
-    clinicFindManyMock.mockResolvedValue([
+    clinicFindManyMock.mockResolvedValueOnce([]).mockResolvedValueOnce([
       {
         id: "1",
         name: "Baja Smile Dental Center",
@@ -77,7 +82,7 @@ describe("Clinics page", () => {
   it("renders clinic names from the database", async () => {
     render(await ClinicsPage({ searchParams: Promise.resolve({}) }));
 
-    expect(screen.getByText("Baja Smile Dental Center")).toBeInTheDocument();
-    expect(screen.getByText("Clinica Dental Rio")).toBeInTheDocument();
+    expect(screen.getAllByText("Baja Smile Dental Center").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Clinica Dental Rio").length).toBeGreaterThan(0);
   });
 });

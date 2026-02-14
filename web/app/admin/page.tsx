@@ -1,7 +1,41 @@
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+
+async function updateClinicFeatured(formData: FormData) {
+  "use server";
+
+  const clinicId = formData.get("clinicId");
+  if (typeof clinicId !== "string" || clinicId.trim().length === 0) {
+    return;
+  }
+
+  const isFeatured = formData.get("isFeatured") === "on";
+  const featuredRankRaw = formData.get("featuredRank");
+  let featuredRank: number | null = null;
+
+  if (typeof featuredRankRaw === "string" && featuredRankRaw.trim().length > 0) {
+    const parsedRank = Number.parseInt(featuredRankRaw.trim(), 10);
+    if (Number.isFinite(parsedRank)) {
+      featuredRank = parsedRank;
+    }
+  }
+
+  await db.clinic.update({
+    where: {
+      id: clinicId,
+    },
+    data: {
+      isFeatured,
+      featuredRank: isFeatured ? featuredRank : null,
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/clinics");
+}
 
 export default async function AdminPage() {
   const clinics = await db.clinic.findMany({
@@ -14,6 +48,8 @@ export default async function AdminPage() {
       slug: true,
       websiteUrl: true,
       whatsapp: true,
+      isFeatured: true,
+      featuredRank: true,
       updatedAt: true,
     },
   });
@@ -51,6 +87,8 @@ export default async function AdminPage() {
               <th>Slug</th>
               <th>Website</th>
               <th>WhatsApp</th>
+              <th>Featured</th>
+              <th>Featured rank</th>
               <th>Updated</th>
             </tr>
           </thead>
@@ -71,6 +109,36 @@ export default async function AdminPage() {
                   )}
                 </td>
                 <td>{clinic.whatsapp ?? "-"}</td>
+                <td>
+                  <form action={updateClinicFeatured} className="row">
+                    <input type="hidden" name="clinicId" value={clinic.id} />
+                    <label className="checkboxLabel">
+                      <input type="checkbox" name="isFeatured" defaultChecked={clinic.isFeatured} />
+                      Featured
+                    </label>
+                    <button type="submit" className="btn btnSecondary btnSm">
+                      Save
+                    </button>
+                  </form>
+                </td>
+                <td>
+                  <form action={updateClinicFeatured} className="row">
+                    <input type="hidden" name="clinicId" value={clinic.id} />
+                    {clinic.isFeatured ? <input type="hidden" name="isFeatured" value="on" /> : null}
+                    <input
+                      type="number"
+                      name="featuredRank"
+                      min={1}
+                      step={1}
+                      defaultValue={clinic.featuredRank ?? ""}
+                      className="inputSm"
+                      aria-label={`Featured rank for ${clinic.name}`}
+                    />
+                    <button type="submit" className="btn btnSecondary btnSm">
+                      Save rank
+                    </button>
+                  </form>
+                </td>
                 <td>{new Date(clinic.updatedAt).toLocaleString()}</td>
               </tr>
             ))}

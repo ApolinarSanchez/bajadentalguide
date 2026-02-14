@@ -376,6 +376,11 @@ button:disabled {
   gap: var(--space-3);
 }
 
+.inputSm {
+  width: 5.5rem;
+  min-width: 5.5rem;
+}
+
 .directoryLayout {
   display: grid;
   align-items: start;
