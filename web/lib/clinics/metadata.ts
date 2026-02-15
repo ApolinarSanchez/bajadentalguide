@@ -4,7 +4,7 @@ export type ClinicMetadataRobots = {
 };
 
 export function clinicMetadataRobots(clinic: { isPublished: boolean } | null): ClinicMetadataRobots {
-  const shouldIndex = clinic?.isPublished ?? true;
+  const shouldIndex = clinic?.isPublished ?? false;
 
   return {
     index: shouldIndex,

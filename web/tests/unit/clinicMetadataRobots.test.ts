@@ -15,4 +15,11 @@ describe("clinicMetadataRobots", () => {
     expect(robots.index).toBe(false);
     expect(robots.follow).toBe(true);
   });
+
+  it("returns index=false when clinic is missing", () => {
+    const robots = clinicMetadataRobots(null);
+
+    expect(robots.index).toBe(false);
+    expect(robots.follow).toBe(true);
+  });
 });
