@@ -16,6 +16,7 @@ export function ClinicEditSuggestionForm({ clinicSlug }: ClinicEditSuggestionFor
   const [contactEmail, setContactEmail] = useState("");
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -26,6 +27,7 @@ export function ClinicEditSuggestionForm({ clinicSlug }: ClinicEditSuggestionFor
 
     setPending(true);
     setMessage("");
+    setStatus("idle");
 
     try {
       const response = await fetch(`/api/clinics/${clinicSlug}/suggest-edit`, {
@@ -47,24 +49,24 @@ export function ClinicEditSuggestionForm({ clinicSlug }: ClinicEditSuggestionFor
       if (!response.ok) {
         if (response.status === 429) {
           setMessage("Too many requests. Please try again later.");
+          setStatus("error");
           return;
         }
         setMessage(body.message ?? "Unable to submit suggestion.");
+        setStatus("error");
         return;
       }
 
       setSubmitted(true);
       setMessage("Suggestion submitted for moderation.");
+      setStatus("success");
     } catch {
       setMessage("Unable to submit suggestion.");
+      setStatus("error");
     } finally {
       setPending(false);
     }
   }
-
-  const isErrorMessage =
-    message === "Too many requests. Please try again later." ||
-    message === "Unable to submit suggestion.";
 
   return (
     <section className="card stack">
@@ -126,7 +128,7 @@ export function ClinicEditSuggestionForm({ clinicSlug }: ClinicEditSuggestionFor
             />
           </div>
           {message ? (
-            <Alert variant={isErrorMessage ? "error" : "success"}>{message}</Alert>
+            <Alert variant={status === "success" ? "success" : "error"}>{message}</Alert>
           ) : null}
           <button type="submit" className="btn btnPrimary">
             {pending ? "Submitting..." : "Submit suggestion"}

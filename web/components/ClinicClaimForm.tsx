@@ -15,6 +15,7 @@ export function ClinicClaimForm({ clinicSlug }: ClinicClaimFormProps) {
   const [pending, setPending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,6 +25,7 @@ export function ClinicClaimForm({ clinicSlug }: ClinicClaimFormProps) {
 
     setPending(true);
     setStatusMessage("");
+    setStatus("idle");
 
     try {
       const response = await fetch(`/api/clinics/${clinicSlug}/claim`, {
@@ -43,24 +45,24 @@ export function ClinicClaimForm({ clinicSlug }: ClinicClaimFormProps) {
       if (!response.ok) {
         if (response.status === 429) {
           setStatusMessage("Too many requests. Please try again later.");
+          setStatus("error");
           return;
         }
         setStatusMessage(body.message ?? "Unable to submit claim request.");
+        setStatus("error");
         return;
       }
 
       setSubmitted(true);
       setStatusMessage("Claim request submitted.");
+      setStatus("success");
     } catch {
       setStatusMessage("Unable to submit claim request.");
+      setStatus("error");
     } finally {
       setPending(false);
     }
   }
-
-  const isError =
-    statusMessage === "Too many requests. Please try again later." ||
-    statusMessage === "Unable to submit claim request.";
 
   return (
     <section className="card stack">
@@ -106,7 +108,7 @@ export function ClinicClaimForm({ clinicSlug }: ClinicClaimFormProps) {
             />
           </div>
           {statusMessage ? (
-            <Alert variant={isError ? "error" : "success"}>{statusMessage}</Alert>
+            <Alert variant={status === "success" ? "success" : "error"}>{statusMessage}</Alert>
           ) : null}
           <button type="submit" className="btn btnPrimary">
             {pending ? "Submitting..." : "Submit claim request"}
