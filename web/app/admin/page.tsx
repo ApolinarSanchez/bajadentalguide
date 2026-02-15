@@ -67,6 +67,9 @@ export default async function AdminPage() {
           <Link href="/admin/import" className="btn btnPrimary">
             Import clinics CSV
           </Link>
+          <Link href="/admin/curation" className="btn btnSecondary">
+            Curation tools
+          </Link>
           <Link href="/admin/analytics" className="btn btnSecondary">
             Analytics dashboard
           </Link>
