@@ -14,6 +14,7 @@ export function buildFeaturedUpdateData(args: {
   if (args.featuredRankRaw === null) {
     return {
       isFeatured: true,
+      isPublished: true,
     };
   }
 
@@ -21,6 +22,7 @@ export function buildFeaturedUpdateData(args: {
   if (normalizedRank.length === 0) {
     return {
       isFeatured: true,
+      isPublished: true,
       featuredRank: null,
     };
   }
@@ -34,6 +36,7 @@ export function buildFeaturedUpdateData(args: {
 
   return {
     isFeatured: true,
+    isPublished: true,
     featuredRank: parsedRank,
   };
 }

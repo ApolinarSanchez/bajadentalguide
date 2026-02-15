@@ -9,6 +9,7 @@ describe("buildFeaturedUpdateData", () => {
     });
 
     expect(data.isFeatured).toBe(true);
+    expect(data.isPublished).toBe(true);
     expect("featuredRank" in data).toBe(false);
   });
 
@@ -32,6 +33,7 @@ describe("buildFeaturedUpdateData", () => {
 
     expect(data).toEqual({
       isFeatured: true,
+      isPublished: true,
       featuredRank: null,
     });
   });
@@ -44,6 +46,7 @@ describe("buildFeaturedUpdateData", () => {
 
     expect(data).toEqual({
       isFeatured: true,
+      isPublished: true,
       featuredRank: 3,
     });
   });

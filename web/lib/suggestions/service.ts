@@ -1,6 +1,6 @@
 import { ClinicEditSuggestionStatus } from "@prisma/client";
 import { logEvent } from "@/lib/events";
-import { buildClinicContactUpdatesFromSuggestion } from "@/lib/suggestions/applySuggestionToClinic";
+import { applySuggestionToClinic } from "@/lib/suggestions/applySuggestionToClinic";
 import { db } from "@/lib/db";
 import { validateClinicEditSuggestion } from "@/lib/suggestions/validateSuggestion";
 
@@ -144,7 +144,28 @@ export async function applyClinicEditSuggestion(args: {
     };
   }
 
-  const clinicUpdates = buildClinicContactUpdatesFromSuggestion(suggestion);
+  const clinic = await db.clinic.findUnique({
+    where: {
+      id: suggestion.clinicId,
+    },
+    select: {
+      phone: true,
+      whatsapp: true,
+      websiteUrl: true,
+      yelpUrl: true,
+      isPublished: true,
+    },
+  });
+
+  if (!clinic) {
+    return {
+      ok: false,
+      status: 404,
+      errors: ["Clinic not found."],
+    };
+  }
+
+  const clinicUpdates = applySuggestionToClinic(clinic, suggestion);
   const hasClinicUpdates = Object.keys(clinicUpdates).length > 0;
 
   await db.$transaction(async (tx) => {

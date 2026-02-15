@@ -5,24 +5,25 @@ import {
 } from "@/lib/suggestions/applySuggestionToClinic";
 
 describe("applySuggestionToClinic", () => {
-  it("merges only provided fields", () => {
+  it("returns updates for only provided fields", () => {
     const clinic = {
       name: "Test Clinic",
       phone: "+52-111-111-1111",
       whatsapp: "+52-222-222-2222",
       websiteUrl: "https://old.example.com",
       yelpUrl: "https://old-yelp.example.com",
+      isPublished: true,
     };
 
-    const updated = applySuggestionToClinic(clinic, {
+    const updates = applySuggestionToClinic(clinic, {
       suggestedWebsiteUrl: "https://new.example.com",
       suggestedYelpUrl: "https://new-yelp.example.com",
     });
 
-    expect(updated.websiteUrl).toBe("https://new.example.com");
-    expect(updated.yelpUrl).toBe("https://new-yelp.example.com");
-    expect(updated.phone).toBe("+52-111-111-1111");
-    expect(updated.whatsapp).toBe("+52-222-222-2222");
+    expect(updates).toEqual({
+      websiteUrl: "https://new.example.com",
+      yelpUrl: "https://new-yelp.example.com",
+    });
   });
 
   it("ignores empty string suggestions", () => {

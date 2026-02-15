@@ -1,8 +1,11 @@
+import { computeIsPublished } from "@/lib/clinics/publishLogic";
+
 type ClinicContactFields = {
   phone?: string | null;
   whatsapp?: string | null;
   websiteUrl?: string | null;
   yelpUrl?: string | null;
+  isPublished?: boolean;
 };
 
 type SuggestionFields = {
@@ -53,10 +56,29 @@ export function buildClinicContactUpdatesFromSuggestion(
 export function applySuggestionToClinic<T extends ClinicContactFields>(
   clinic: T,
   suggestion: SuggestionFields,
-): T {
-  const updates = buildClinicContactUpdatesFromSuggestion(suggestion);
+): Partial<Pick<ClinicContactFields, "phone" | "whatsapp" | "websiteUrl" | "yelpUrl" | "isPublished">> {
+  const contactUpdates = buildClinicContactUpdatesFromSuggestion(suggestion);
+
+  const preHasContact = computeIsPublished({
+    phone: clinic.phone,
+    websiteUrl: clinic.websiteUrl,
+    whatsapp: clinic.whatsapp,
+  });
+  const postHasContact = computeIsPublished({
+    phone: contactUpdates.phone ?? clinic.phone,
+    websiteUrl: contactUpdates.websiteUrl ?? clinic.websiteUrl,
+    whatsapp: contactUpdates.whatsapp ?? clinic.whatsapp,
+  });
+
+  const shouldAutoPublish =
+    clinic.isPublished === false && preHasContact === false && postHasContact === true;
+
+  if (!shouldAutoPublish) {
+    return contactUpdates;
+  }
+
   return {
-    ...clinic,
-    ...updates,
+    ...contactUpdates,
+    isPublished: true,
   };
 }
