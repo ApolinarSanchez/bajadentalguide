@@ -1,9 +1,8 @@
-import { Alert } from "@/components/Alert";
+import { AdminClinicFeaturedForm } from "@/components/admin/AdminClinicFeaturedForm";
 import { buildFeaturedUpdateData } from "@/lib/clinics/featuredUpdate";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -15,21 +14,15 @@ async function updateClinicFeatured(formData: FormData) {
     return;
   }
 
-  const isFeatured = formData.get("isFeatured") === "on";
   const featuredRankRaw = formData.get("featuredRank");
-
-  let data;
+  let data: ReturnType<typeof buildFeaturedUpdateData>;
   try {
     data = buildFeaturedUpdateData({
-      isFeatured,
+      isFeatured: formData.get("isFeatured") === "1",
       featuredRankRaw,
     });
-  } catch (error) {
-    const message =
-      error instanceof Error && error.message.trim().length > 0
-        ? error.message
-        : "Unable to update featured rank.";
-    redirect(`/admin?featuredError=${encodeURIComponent(message)}`);
+  } catch {
+    return;
   }
 
   await db.clinic.update({
@@ -43,24 +36,7 @@ async function updateClinicFeatured(formData: FormData) {
   revalidatePath("/clinics");
 }
 
-type AdminPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
-function getFirstParamValue(
-  input: Record<string, string | string[] | undefined>,
-  key: string,
-): string | undefined {
-  const value = input[key];
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-  return value;
-}
-
-export default async function AdminPage({ searchParams }: AdminPageProps) {
-  const params = await searchParams;
-  const featuredError = getFirstParamValue(params, "featuredError");
+export default async function AdminPage() {
   const clinics = await db.clinic.findMany({
     orderBy: {
       name: "asc",
@@ -108,7 +84,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </Link>
         </nav>
       </header>
-      {featuredError ? <Alert variant="error">{featuredError}</Alert> : null}
       <div className="tableWrap">
         <table className="table">
           <thead>
@@ -139,35 +114,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   )}
                 </td>
                 <td>{clinic.whatsapp ?? "-"}</td>
-                <td>
-                  <form action={updateClinicFeatured} className="row">
-                    <input type="hidden" name="clinicId" value={clinic.id} />
-                    <label className="checkboxLabel">
-                      <input type="checkbox" name="isFeatured" defaultChecked={clinic.isFeatured} />
-                      Featured
-                    </label>
-                    <button type="submit" className="btn btnSecondary btnSm">
-                      Save
-                    </button>
-                  </form>
-                </td>
-                <td>
-                  <form action={updateClinicFeatured} className="row">
-                    <input type="hidden" name="clinicId" value={clinic.id} />
-                    {clinic.isFeatured ? <input type="hidden" name="isFeatured" value="on" /> : null}
-                    <input
-                      type="number"
-                      name="featuredRank"
-                      min={0}
-                      step={1}
-                      defaultValue={clinic.featuredRank ?? ""}
-                      className="inputSm"
-                      aria-label={`Featured rank for ${clinic.name}`}
-                    />
-                    <button type="submit" className="btn btnSecondary btnSm">
-                      Save rank
-                    </button>
-                  </form>
+                <td colSpan={2}>
+                  <AdminClinicFeaturedForm clinic={clinic} action={updateClinicFeatured} />
                 </td>
                 <td>{new Date(clinic.updatedAt).toLocaleString()}</td>
               </tr>
