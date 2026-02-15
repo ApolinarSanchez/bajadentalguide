@@ -1,6 +1,9 @@
+import { Alert } from "@/components/Alert";
+import { buildFeaturedUpdateData } from "@/lib/clinics/featuredUpdate";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -14,30 +17,50 @@ async function updateClinicFeatured(formData: FormData) {
 
   const isFeatured = formData.get("isFeatured") === "on";
   const featuredRankRaw = formData.get("featuredRank");
-  let featuredRank: number | null = null;
 
-  if (typeof featuredRankRaw === "string" && featuredRankRaw.trim().length > 0) {
-    const parsedRank = Number.parseInt(featuredRankRaw.trim(), 10);
-    if (Number.isFinite(parsedRank)) {
-      featuredRank = parsedRank;
-    }
+  let data;
+  try {
+    data = buildFeaturedUpdateData({
+      isFeatured,
+      featuredRankRaw,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message.trim().length > 0
+        ? error.message
+        : "Unable to update featured rank.";
+    redirect(`/admin?featuredError=${encodeURIComponent(message)}`);
   }
 
   await db.clinic.update({
     where: {
       id: clinicId,
     },
-    data: {
-      isFeatured,
-      featuredRank: isFeatured ? featuredRank : null,
-    },
+    data,
   });
 
   revalidatePath("/admin");
   revalidatePath("/clinics");
 }
 
-export default async function AdminPage() {
+type AdminPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+function getFirstParamValue(
+  input: Record<string, string | string[] | undefined>,
+  key: string,
+): string | undefined {
+  const value = input[key];
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+  return value;
+}
+
+export default async function AdminPage({ searchParams }: AdminPageProps) {
+  const params = await searchParams;
+  const featuredError = getFirstParamValue(params, "featuredError");
   const clinics = await db.clinic.findMany({
     orderBy: {
       name: "asc",
@@ -85,6 +108,7 @@ export default async function AdminPage() {
           </Link>
         </nav>
       </header>
+      {featuredError ? <Alert variant="error">{featuredError}</Alert> : null}
       <div className="tableWrap">
         <table className="table">
           <thead>
@@ -134,7 +158,7 @@ export default async function AdminPage() {
                     <input
                       type="number"
                       name="featuredRank"
-                      min={1}
+                      min={0}
                       step={1}
                       defaultValue={clinic.featuredRank ?? ""}
                       className="inputSm"
